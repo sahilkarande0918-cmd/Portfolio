@@ -3,6 +3,8 @@
 // so swapping the page underneath it is invisible.
 
 export const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+/** phones, tablets and modest laptops (set before first paint in the layout) */
+export const lite = () => document.documentElement.classList.contains("lite");
 
 let layer: HTMLDivElement | null = null;
 
@@ -47,11 +49,14 @@ export function walking(on: boolean) {
 
 /** resolves once a freshly mounted page has painted twice and the main thread has gone idle (capped) */
 export function settle(cap = 450) {
-  return new Promise<void>((done) =>
-    requestAnimationFrame(() =>
-      requestAnimationFrame(() => ("requestIdleCallback" in window ? requestIdleCallback(() => done(), { timeout: cap }) : setTimeout(done, 120))),
-    ),
-  );
+  const idle = (f: () => void) => ("requestIdleCallback" in window ? requestIdleCallback(f, { timeout: cap }) : setTimeout(f, 120));
+  const frame = () => new Promise<void>((r) => requestAnimationFrame(() => r()));
+  // two painted frames, an idle moment, then two more so the freshly drawn wall is on screen before anything moves
+  return frame()
+    .then(frame)
+    .then(() => new Promise<void>((r) => idle(r)))
+    .then(frame)
+    .then(frame);
 }
 
 /** the door to walk back out of, set by a room's "Back to the doors" */

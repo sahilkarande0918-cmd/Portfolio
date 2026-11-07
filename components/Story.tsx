@@ -21,7 +21,7 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
     const ol = list.current!, m = meter.current!, canvas = bg.current!;
     const items = [...ol.querySelectorAll<HTMLElement>(".ch")];
     const ctx = canvas.getContext("2d")!;
-    const drawBg = !matchMedia("(prefers-reduced-motion: reduce)").matches && matchMedia("(min-width: 768px)").matches;
+    const drawBg = !document.documentElement.classList.contains("lite") && !matchMedia("(prefers-reduced-motion: reduce)").matches && matchMedia("(min-width: 768px)").matches;
     let raf = 0, W = 0, H = 0;
     const size = () => {
       const dpr = 1; // faint hairlines: no need to draw them at retina density
@@ -60,19 +60,33 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
         ctx.stroke();
       }
     };
+    const fill = ol.querySelector<HTMLElement>(".story__fill")!, dot = ol.querySelector<HTMLElement>(".story__dot")!;
+    const bar = m.querySelector<HTMLElement>(".story__bar b")!, rw = m.querySelector<SVGElement>(".story__rw")!;
+    // positions are measured once (and on resize); a scrolled frame only does arithmetic and writes transforms
+    let listTop = 0, listH = 1, tops: number[] = [];
+    const measure = () => {
+      listTop = ol.getBoundingClientRect().top + scrollY;
+      listH = ol.offsetHeight || 1;
+      tops = items.map((it) => it.getBoundingClientRect().top + scrollY);
+    };
+    let lastIdx = -1;
     const update = () => {
       raf = 0;
-      const r = ol.getBoundingClientRect(), mid = innerHeight / 2;
-      const fp = Math.min(1, Math.max(0, (mid - r.top) / r.height));
-      ol.style.setProperty("--fp", String(fp));
+      const mid = scrollY + innerHeight / 2;
+      const fp = Math.min(1, Math.max(0, (mid - listTop) / listH));
       let idx = 0;
-      items.forEach((it, i) => {
-        if (it.getBoundingClientRect().top < mid) idx = i;
+      tops.forEach((t, i) => {
+        if (t < mid) idx = i;
       });
-      const p = items.length > 1 ? idx / (items.length - 1) : 1;
-      m.style.setProperty("--p", String(Math.max(p, fp)));
-      sec.current!.classList.toggle("at-start", fp <= 0);
-      setAt(idx);
+      const p = Math.max(items.length > 1 ? idx / (items.length - 1) : 1, fp);
+      fill.style.transform = `scaleY(${fp.toFixed(4)})`;
+      dot.style.transform = `translate3d(0, ${(fp * listH).toFixed(1)}px, 0)`;
+      bar.style.transform = `scaleX(${p.toFixed(4)})`;
+      rw.style.transform = `rotate(${(p * -720).toFixed(1)}deg)`;
+      if (idx !== lastIdx) {
+        lastIdx = idx;
+        setAt(idx);
+      }
       if (drawBg) dials(fp);
     };
     // nothing runs while the story is off screen
@@ -84,14 +98,18 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
     io.observe(sec.current!);
     const onScroll = () => visible && !raf && (raf = requestAnimationFrame(update));
     size();
+    measure();
     update();
     addEventListener("scroll", onScroll, { passive: true });
-    const onResize = () => (size(), onScroll());
+    const onResize = () => (size(), measure(), onScroll());
+    const ro = new ResizeObserver(onResize);
+    ro.observe(ol);
     addEventListener("resize", onResize);
     addEventListener("modechange", onScroll);
     return () => {
       cancelAnimationFrame(raf);
       io.disconnect();
+      ro.disconnect();
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onResize);
       removeEventListener("modechange", onScroll);

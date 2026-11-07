@@ -38,7 +38,6 @@ export default function Header() {
   const { time, date } = useClock();
   const [stuck, setStuck] = useState(false);
   const menu = useRef<HTMLDialogElement>(null);
-  const bar = useRef<HTMLElement>(null);
   const back = backFor(path);
   const router = useRouter();
 
@@ -71,20 +70,14 @@ export default function Header() {
     const on = () => setStuck(scrollY > 24);
     on();
     addEventListener("scroll", on, { passive: true });
-    // sticky content in the rooms parks below the bar, never behind it
-    const ro = new ResizeObserver(() => document.documentElement.style.setProperty("--nav-h", `${bar.current!.offsetHeight}px`));
-    ro.observe(bar.current!);
-    return () => {
-      removeEventListener("scroll", on);
-      ro.disconnect();
-    };
+    return () => removeEventListener("scroll", on);
   }, []);
 
   const current = (href: string) => (href === "/" ? path === "/" : href.startsWith("/#") ? false : path.startsWith(href));
 
   return (
     <>
-      <header className={`hdr${stuck || back ? " stuck" : ""}`} ref={bar}>
+      <header className={`hdr${stuck || back ? " stuck" : ""}`}>
         <div className="shell hdr__in">
           <nav aria-label="Primary">
             <ul className="nav">

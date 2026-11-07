@@ -17,7 +17,7 @@ Sources read on 7 Nov 2026 via `gh` (READMEs, file trees, contributor counts) an
 | FaultLine | public | Internship project | README, certificate | Not employment at Cisco |
 | JanYojana, HeatShield, Veridex, DocuTrack | public | Live demo / prototype | READMEs | Scope caveats on each page |
 | Assignment Studio | public | Private beta | README | Owner sign-in; no screenshot taken behind login |
-| ExamPrepAI, SahvoraOS | private | In development / private | READMEs | Public-safe summaries, no repo buttons |
+| ExamPrepAI, SahvoraOS | private | In development / private | READMEs | Public-safe summaries; no repo or live link (SahvoraOS's Vercel app is the owner's personal tool and is never linked) |
 | CPU scheduler, Multithreaded processing | public | Coursework (archive) | READMEs | READMEs contain a PRN — not reproduced |
 | EDS-code-tantra, My-Portfolio, profile repo | — | not shown | — | Learning archive / old site / profile |
 

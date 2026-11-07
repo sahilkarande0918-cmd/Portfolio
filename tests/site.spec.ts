@@ -116,3 +116,11 @@ test("the portrait is fixed in the page: normal cursor, can't be dragged or sele
   const cancelled = await fig.evaluate((el) => !el.dispatchEvent(new DragEvent("dragstart", { bubbles: true, cancelable: true })));
   expect(cancelled).toBe(true);
 });
+
+test("modest devices and phones get the lite profile: native scrolling, no parallax", async ({ page, isMobile }) => {
+  await page.goto("/");
+  await page.waitForTimeout(800);
+  const state = await page.evaluate(() => ({ lite: document.documentElement.classList.contains("lite"), lenis: "lenis" in window }));
+  if (isMobile) expect(state).toEqual({ lite: true, lenis: false });
+  else expect(state.lite).toBe(false);
+});

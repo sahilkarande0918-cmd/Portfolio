@@ -25,8 +25,9 @@ export const viewport: Viewport = {
   themeColor: "#1a1818",
 };
 
-// runs before first paint so the saved mode never flashes; dark until the cord is pulled
-const modeScript = `try{var m=localStorage.getItem('mode');if(m!=='light')m='dark';document.documentElement.dataset.mode=m}catch(e){document.documentElement.dataset.mode='dark'}requestAnimationFrame(function(){document.documentElement.classList.add('ready')})`;
+// runs before first paint so the saved mode never flashes (dark until the cord is pulled), and picks the
+// lite profile for modest devices: the same site, with the heaviest per-frame effects eased off
+const modeScript = `try{var m=localStorage.getItem('mode');if(m!=='light')m='dark';document.documentElement.dataset.mode=m}catch(e){document.documentElement.dataset.mode='dark'}try{var n=navigator;if(matchMedia('(pointer: coarse)').matches||(n.hardwareConcurrency||8)<=4||(n.deviceMemory||8)<=4||(n.connection&&n.connection.saveData))document.documentElement.classList.add('lite')}catch(e){}requestAnimationFrame(function(){document.documentElement.classList.add('ready')})`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -19,7 +19,14 @@ import { cover, EXIT_KEY, reduced, settle, spring, uncover, walking } from "./wa
 const ANG = 70; // fully open, swung into the room
 const HOVER = 0.1;
 const ZOOM_MS = 1500;
-const BACK_MS = 1300;
+const IN_OUT: [number, number, number, number] = [0.65, 0, 0.35, 1]; // cubic in-out
+
+/** the walk-through camera at progress e (0 at the wall, 1 inside the doorway) */
+function camera(g: { tx: number; ty: number; sEnd: number }, e: number) {
+  const sc = Math.exp(Math.log(g.sEnd) * e); // an even speed of approach
+  const f = Math.min(1, e * 1.6); // the door drifts to the centre early on
+  return `translate(${(g.tx * f).toFixed(2)}px, ${(g.ty * f).toFixed(2)}px) scale(${sc.toFixed(4)})`;
+}
 
 export default function Doors({ doors }: { doors: Door[] }) {
   const router = useRouter();
@@ -90,15 +97,16 @@ export default function Doors({ doors }: { doors: Door[] }) {
         leaves.current[i].jump(1);
         const g = geometry(i);
         // the camera path: the same exponential zoom as walking in, played backwards
-        const at = (e: number) => `translate(${(g.tx * (1 - e)).toFixed(2)}px, ${(g.ty * (1 - e)).toFixed(2)}px) scale(${Math.exp(Math.log(g.sEnd) * (1 - e)).toFixed(4)})`;
+        const at = (t: number) => camera(g, 1 - t); // the walk-in, played backwards
         requestAnimationFrame(() =>
           requestAnimationFrame(() => {
             s.style.transformOrigin = g.origin;
             s.style.transform = at(0);
             // the page behind has only just mounted: wait, still covered, until the main thread is free
-            settle().then(async () => {
+            settle(650).then(async () => {
               uncover(450);
-              await animate(0, 1, { duration: BACK_MS / 1000, ease: [0.33, 1, 0.68, 1], onUpdate: (e) => (s.style.transform = at(e)) });
+              // same duration and the same gentle in-out curve as walking in, so both directions feel alike
+              await animate(0, 1, { duration: ZOOM_MS / 1000, ease: IN_OUT, onUpdate: (t) => (s.style.transform = at(t)) });
               s.style.transform = s.style.transformOrigin = "";
               delete s.dataset.walk;
               delete s.dataset.lift;
@@ -195,11 +203,10 @@ export default function Doors({ doors }: { doors: Door[] }) {
     let handed = false;
     animate(0, 1, {
       duration: ZOOM_MS / 1000,
-      ease: [0.65, 0, 0.35, 1], // in-out cubic
+      ease: IN_OUT,
       onUpdate: (e) => {
-        const sc = Math.exp(Math.log(g.sEnd) * e); // an even speed of approach
-        const f = Math.min(1, e * 1.6); // the door drifts to the centre early on
-        s.style.transform = `translate(${(g.tx * f).toFixed(2)}px, ${(g.ty * f).toFixed(2)}px) scale(${sc.toFixed(4)})`;
+        s.style.transform = camera(g, e);
+        const sc = Math.exp(Math.log(g.sEnd) * e);
         // the moment the room's darkness covers the screen, the room takes over: same colour, no blank
         if (!handed && (sc >= g.sEnd / 1.15 || e >= 1)) {
           handed = true;

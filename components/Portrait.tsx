@@ -24,7 +24,7 @@ export default function Portrait() {
     const mask = document.createElement("canvas"), mx = mask.getContext("2d")!;
     let W = 0, H = 0, raf = 0, life = 0, lx = -1, ly = -1;
     const size = () => {
-      const r = el.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+      const r = el.getBoundingClientRect(), dpr = document.documentElement.classList.contains("lite") ? 1 : Math.min(devicePixelRatio || 1, 2);
       W = r.width;
       H = r.height;
       canvas.width = W * dpr;

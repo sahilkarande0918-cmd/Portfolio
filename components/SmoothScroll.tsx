@@ -2,6 +2,7 @@
 import { usePathname } from "next/navigation";
 import { useEffect } from "react";
 import Lenis from "lenis";
+import { lite } from "./walk";
 
 /*
   Wheel scrolling glides on Lenis (fine pointers only; touch keeps native momentum, as on the
@@ -21,7 +22,8 @@ function apply(y: number) {
   }
 }
 function measure() {
-  if (matchMedia("(prefers-reduced-motion: reduce)").matches) return (items = []);
+  // parallax is decoration: modest devices skip it entirely
+  if (lite() || matchMedia("(prefers-reduced-motion: reduce)").matches) return (items = []);
   items = [...document.querySelectorAll<HTMLElement>("[data-speed]")].map((el) => {
     el.style.translate = "";
     const r = el.getBoundingClientRect();
@@ -36,7 +38,8 @@ export default function SmoothScroll() {
   // once: the scroll engine
   useEffect(() => {
     let lenis: Lenis | null = null, id = 0, mo: MutationObserver | null = null, pending = 0;
-    if (matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    // eased wheel scrolling on capable machines; phones and modest laptops keep native scrolling
+    if (!lite() && matchMedia("(hover: hover) and (pointer: fine)").matches && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
       lenis = new Lenis({ lerp: 0.085, wheelMultiplier: 1, anchors: { offset: 0 }, prevent: (n) => !!n.closest?.("dialog, .doors__viewport") });
       (window as unknown as { lenis?: Lenis }).lenis = lenis;
       lenis.on("scroll", (l: Lenis) => apply(l.scroll));

@@ -8,6 +8,8 @@ const base = process.argv[3] ?? "http://localhost:3130";
 mkdirSync(out, { recursive: true });
 const b = await chromium.launch({ channel: process.env.PW_CHANNEL ?? "msedge" });
 const p = await b.newPage({ viewport: { width: 1440, height: 900 } });
+// CPU=4 slows the page's CPU 4x, standing in for a modest laptop
+if (process.env.CPU) await (await p.context().newCDPSession(p)).send("Emulation.setCPUThrottlingRate", { rate: Number(process.env.CPU) });
 
 const startFrames = () =>
   p.evaluate(() => {

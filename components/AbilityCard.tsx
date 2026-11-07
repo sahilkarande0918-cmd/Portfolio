@@ -25,7 +25,7 @@ export default function AbilityCard({ openKey }: { openKey: number }) {
     const t0 = performance.now();
     let raf = 0, last = 0;
     let tx = 0, ty = 0, rx = 0, ry = 0, spin = 0, hover = false, drag: { x: number; s: number } | null = null;
-    const parts = Array.from({ length: 46 }, () => seed({}));
+    const parts = Array.from({ length: document.documentElement.classList.contains("lite") ? 14 : 46 }, () => seed({}));
     function seed(p: Record<string, number>, first = true) {
       p.x = Math.random();
       p.y = first ? Math.random() : 1.05;
@@ -36,7 +36,7 @@ export default function AbilityCard({ openKey }: { openKey: number }) {
       return p;
     }
     const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      const dpr = document.documentElement.classList.contains("lite") ? 1 : Math.min(devicePixelRatio || 1, 1.5);
       cv.width = innerWidth * dpr;
       cv.height = innerHeight * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

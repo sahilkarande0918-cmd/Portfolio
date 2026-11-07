@@ -143,7 +143,7 @@
 
 /* ============ Tamrivo ============ */
 .tam__status { display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.8rem; border-radius: 99px; border: 1px solid rgba(var(--fg-rgb), 0.16); color: var(--foreground); }
-.tam__status i { width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #c46a35; animation: pulse 2.2s ease-out infinite; }
+.tam__status i { position: relative; width: 0.45rem; height: 0.45rem; border-radius: 50%; background: #c46a35; }
 .tam__lede { font-size: clamp(1.25rem, 2vw, 1.75rem) !important; line-height: 1.35 !important; max-width: 34ch !important; color: var(--foreground) !important; letter-spacing: -0.01em; }
 .tam__grid { display: grid; gap: 1rem; margin-bottom: 4rem; }
 @media (min-width: 900px) { .tam__grid { grid-template-columns: repeat(3, 1fr); } }

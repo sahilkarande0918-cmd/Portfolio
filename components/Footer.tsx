@@ -17,17 +17,22 @@ export default function Footer() {
   // floating back-to-top: appears after the first screen and shows how far down you are
   useEffect(() => {
     let raf = 0;
+    let max = 0;
+    const ro = new ResizeObserver(() => (max = document.documentElement.scrollHeight - innerHeight));
+    ro.observe(document.body);
     const on = () => {
       raf = 0;
       const t = top.current!;
-      const max = document.documentElement.scrollHeight - innerHeight;
       t.classList.toggle("show", scrollY > innerHeight * 0.9);
       t.style.setProperty("--p", String(max > 0 ? scrollY / max : 0));
     };
     const s = () => raf || (raf = requestAnimationFrame(on));
     addEventListener("scroll", s, { passive: true });
     on();
-    return () => removeEventListener("scroll", s);
+    return () => {
+      removeEventListener("scroll", s);
+      ro.disconnect();
+    };
   }, []);
 
   return (

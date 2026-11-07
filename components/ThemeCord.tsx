@@ -32,7 +32,7 @@ export default function ThemeCord() {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
     function layout(initial: boolean) {
-      const dpr = Math.min(devicePixelRatio || 1, 2);
+      const dpr = document.documentElement.classList.contains("lite") ? 1.5 : Math.min(devicePixelRatio || 1, 2);
       W = el.clientWidth;
       H = el.clientHeight;
       canvas.width = W * dpr;

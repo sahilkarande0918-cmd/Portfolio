@@ -26,6 +26,7 @@ export default function CertificateGallery({ worlds }: { worlds: World[] }) {
   useEffect(() => {
     const els = [...root.current!.querySelectorAll<HTMLElement>(".world")];
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const calm = document.documentElement.classList.contains("lite"); // modest devices: swing only as the line moves
     const W = els.map((el) => ({
       el,
       track: el.querySelector<HTMLElement>(".track")!,
@@ -67,7 +68,7 @@ export default function CertificateGallery({ worlds }: { worlds: World[] }) {
         w.bar.style.setProperty("--p", p.toFixed(4));
         if (reduce) return;
         w.prints.forEach((pr) => {
-          const idle = Math.sin((t / 1000) * pr.sp + pr.ph) * 1.1;
+          const idle = calm ? 0 : Math.sin((t / 1000) * pr.sp + pr.ph) * 1.1;
           const target = Math.max(-11, Math.min(11, vel * 0.55)) + idle;
           pr.v += (target - pr.a) * 0.045 * dt;
           pr.v *= Math.pow(0.88, dt);

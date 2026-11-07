@@ -18,9 +18,15 @@
 - SEO: metadata, OG image, favicon, sitemap, robots, Person schema linking GitHub and LinkedIn.
 - GitHub and LinkedIn buttons in the header on every page (and in the menu, footer and card).
 
+## Performance (7 Nov 2026)
+- Lite profile (set before first paint for touch devices, <=4 cores, <=4 GB or data saver): native scrolling, no parallax, no ambient drift/dial canvas, no idle certificate sway, fewer embers, lower canvas density. Same layout and features.
+- Found with Chrome traces (`scripts/trace.mjs`): the header's height was written to a root CSS variable on every frame of its shrink, restyling the whole page; the timeline and back-to-top forced layouts each scroll frame; status dots animated box-shadow (repaint every frame). All fixed: `--nav-h` is pure CSS, per-frame code only writes transforms from cached positions, pulses are composited rings, plaster is a pre-rendered tile, the sill glow has no filter.
+- `scripts/firstpaint.mjs` (first scroll into the doors): phone at 6x CPU 0–5 dropped frames (was 34–41); 4-core laptop at 6x 2–13 (was 56–65); this laptop at 4x 0–5.
+- Door exit is the walk-in played backwards (same 1.5 s in-out curve), started once the page is idle and painted under the cover.
+
 ## Verification
 - `tsc`, `eslint`, `next build` clean (31 static routes).
-- Playwright `tests/site.spec.ts`: 26 passed, 2 skipped (desktop-only pointer checks) at 1440×900 and 390×844.
+- Playwright `tests/site.spec.ts`: 30 passed, 2 skipped (desktop-only pointer checks) at 1440×900 and 390×844.
 - Perf (`scripts/perf.mjs`, local production build): mobile 4× CPU / 1.6 Mbps → LCP 1.26 s, CLS 0.04; desktop LCP 0.11 s, CLS 0.002. Not a field measurement.
 - Visual review: `scripts/shots.mjs` (desktop dark/light + phone).
 
