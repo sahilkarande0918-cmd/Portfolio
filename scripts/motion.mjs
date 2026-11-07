@@ -59,6 +59,14 @@ for (const [ms, n] of [[250, 1], [700, 2], [1100, 3], [1600, 4], [2400, 5], [320
   prev = ms;
   await p.screenshot({ path: `${out}/out-${n}.png` });
 }
-await stats("door walk out");
+await stats("door walk out (whole sequence, incl. covered page swap)");
+// the camera move itself: from the moment the back-out animation starts until it ends
+await p.goto(base + "/work/ai-agents");
+await p.waitForTimeout(1500);
+await p.getByRole("link", { name: "Back to the doors" }).first().click();
+await p.waitForFunction(() => document.querySelector(".passage")?.style.opacity === "0", null, { timeout: 8000, polling: 16 });
+await startFrames();
+await p.waitForTimeout(1300);
+await stats("back-out camera move");
 console.log("url after exit:", p.url(), "focused:", await p.evaluate(() => document.activeElement?.id));
 await b.close();

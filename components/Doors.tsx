@@ -2,7 +2,8 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Door } from "@/content/site";
-import { cover, EXIT_KEY, reduced, spring, uncover, walking } from "./walk";
+import { animate } from "motion";
+import { cover, EXIT_KEY, reduced, settle, spring, uncover, walking } from "./walk";
 
 /*
   All five doors stand on one wall. Hovering cracks a door a few degrees into its room and describes
@@ -28,7 +29,6 @@ export default function Doors({ doors }: { doors: Door[] }) {
   const cursor = useRef<HTMLDivElement>(null);
   const leaves = useRef<ReturnType<typeof spring>[]>([]);
   const busy = useRef(false);
-  const raf = useRef(0);
   const [seen, setSeen] = useState(false);
   const [on, setOn] = useState(-1);
   const [mobileAt, setMobileAt] = useState(0);
@@ -84,19 +84,21 @@ export default function Doors({ doors }: { doors: Door[] }) {
         setSeen(true);
         s.classList.remove("pre");
         s.classList.add("in");
+        // promote the wall and let it paint once at its normal size while the screen is still covered:
+        // the zoomed frames then reuse that picture instead of re-rasterising the wall at 14x
         s.dataset.lift = s.dataset.walk = "";
         leaves.current[i].jump(1);
         const g = geometry(i);
-        s.style.transformOrigin = g.origin;
-        s.style.transform = `translate(${g.tx}px, ${g.ty}px) scale(${g.sEnd})`;
-        requestAnimationFrame(() => {
-          uncover(380);
-          const t0 = performance.now();
-          const step = (now: number) => {
-            const p = Math.min(1, (now - t0) / BACK_MS), e = 1 - Math.pow(1 - p, 3);
-            s.style.transform = `translate(${g.tx * (1 - e)}px, ${g.ty * (1 - e)}px) scale(${Math.exp(Math.log(g.sEnd) * (1 - e))})`;
-            if (p < 1) raf.current = requestAnimationFrame(step);
-            else {
+        // the camera path: the same exponential zoom as walking in, played backwards
+        const at = (e: number) => `translate(${(g.tx * (1 - e)).toFixed(2)}px, ${(g.ty * (1 - e)).toFixed(2)}px) scale(${Math.exp(Math.log(g.sEnd) * (1 - e)).toFixed(4)})`;
+        requestAnimationFrame(() =>
+          requestAnimationFrame(() => {
+            s.style.transformOrigin = g.origin;
+            s.style.transform = at(0);
+            // the page behind has only just mounted: wait, still covered, until the main thread is free
+            settle().then(async () => {
+              uncover(450);
+              await animate(0, 1, { duration: BACK_MS / 1000, ease: [0.33, 1, 0.68, 1], onUpdate: (e) => (s.style.transform = at(e)) });
               s.style.transform = s.style.transformOrigin = "";
               delete s.dataset.walk;
               delete s.dataset.lift;
@@ -104,10 +106,9 @@ export default function Doors({ doors }: { doors: Door[] }) {
               walking(false);
               busy.current = false;
               document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
-            }
-          };
-          raf.current = requestAnimationFrame(step);
-        });
+            });
+          }),
+        );
       });
     } else if (exit || (last && location.hash === "#work")) {
       // motion off, or the browser's Back button: just stand in front of the same door again
@@ -120,7 +121,6 @@ export default function Doors({ doors }: { doors: Door[] }) {
     }
     return () => {
       io.disconnect();
-      cancelAnimationFrame(raf.current);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doors]);
@@ -192,22 +192,21 @@ export default function Doors({ doors }: { doors: Door[] }) {
     s.dataset.lift = s.dataset.walk = "";
     const g = geometry(i);
     s.style.transformOrigin = g.origin;
-    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
-    let t0 = 0, handed = false;
-    const step = (now: number) => {
-      t0 ||= now;
-      const p = Math.min(1, (now - t0) / ZOOM_MS), e = ease(p);
-      const sc = Math.exp(Math.log(g.sEnd) * e); // an even speed of approach
-      const f = Math.min(1, e * 1.6); // the door drifts to the centre early on
-      s.style.transform = `translate(${g.tx * f}px, ${g.ty * f}px) scale(${sc})`;
-      // the moment the room's darkness covers the screen, the room takes over: same colour, no blank
-      if (!handed && (sc >= g.sEnd / 1.15 || p >= 1)) {
-        handed = true;
-        cover(0).then(() => router.push(href));
-      }
-      if (p < 1) raf.current = requestAnimationFrame(step);
-    };
-    raf.current = requestAnimationFrame(step);
+    let handed = false;
+    animate(0, 1, {
+      duration: ZOOM_MS / 1000,
+      ease: [0.65, 0, 0.35, 1], // in-out cubic
+      onUpdate: (e) => {
+        const sc = Math.exp(Math.log(g.sEnd) * e); // an even speed of approach
+        const f = Math.min(1, e * 1.6); // the door drifts to the centre early on
+        s.style.transform = `translate(${(g.tx * f).toFixed(2)}px, ${(g.ty * f).toFixed(2)}px) scale(${sc.toFixed(4)})`;
+        // the moment the room's darkness covers the screen, the room takes over: same colour, no blank
+        if (!handed && (sc >= g.sEnd / 1.15 || e >= 1)) {
+          handed = true;
+          cover(0).then(() => router.push(href));
+        }
+      },
+    });
   }
 
   // "Click to enter" badge sits exactly on the pointer

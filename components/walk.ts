@@ -45,6 +45,15 @@ export function walking(on: boolean) {
   }
 }
 
+/** resolves once a freshly mounted page has painted twice and the main thread has gone idle (capped) */
+export function settle(cap = 450) {
+  return new Promise<void>((done) =>
+    requestAnimationFrame(() =>
+      requestAnimationFrame(() => ("requestIdleCallback" in window ? requestIdleCallback(() => done(), { timeout: cap }) : setTimeout(done, 120))),
+    ),
+  );
+}
+
 /** the door to walk back out of, set by a room's "Back to the doors" */
 export const EXIT_KEY = "door-exit";
 

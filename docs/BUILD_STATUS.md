@@ -5,7 +5,8 @@
 - Hero: Onest, measured tokens, both themes (dark by default until the cord is pulled), live Pune clock, 3D flip notebook, b/w portrait with colour painted along the cursor trail + a colour toggle for touch/keyboard, ability-card tag, status hairline.
 - Pull cord: canvas verlet rope, drag past travel toggles once per gesture, click/Enter/Space tug, `role="switch"`, persists, no flash (inline pre-paint script), sleeps when still.
 - Doors: five arched doors on one wall; spring leaf; walk-in zoom and walk-out (back out of the doorway, door swings shut) matched to the reference's timings.
-- Smoothness pass: no canvas blur in the cord, no blend-mode or backdrop blur layers while scrolling, story work paused off screen, Lenis lerp .085, parallax on cached offsets. `scripts/motion.mjs` frame check: scroll and walk-in p95 ≈ 7 ms (headless Edge).
+- Smoothness pass: no canvas blur in the cord, no blend-mode or backdrop blur layers while scrolling, story work paused off screen, Lenis lerp .085, parallax on cached offsets. `scripts/motion.mjs` frame check (headless Edge): scroll, walk-in and back-out camera p95 ≈ 7 ms, 0 dropped frames during the camera moves.
+- Door camera moves use Motion's frame-synced `animate()`; the back-out first paints the wall at 1x under the cover (so zoomed frames reuse that raster) and waits for the freshly mounted page to go idle. A compositor (WAAPI) camera was tried and rejected: Chrome re-rasterises the wall at peak zoom, stalling ~1 s.
 - Rooms `/work/{ai-agents,products-web,ml-impact}`: stacked sticky panels with real screenshots in monitor/phone/terminal frames, search, coursework archive.
 - 19 case studies `/projects/*` with problem / approach / decisions / features / stack / contribution / limits / evidence and a screenshot lightbox.
 - Tamrivo info room (no code, links or internals, per owner).
