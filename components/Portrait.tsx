@@ -91,12 +91,14 @@ export default function Portrait() {
     <div
       className={`fig${color ? " color" : ""}`}
       ref={fig}
+      onDragStart={(e) => e.preventDefault()}
+      onContextMenu={(e) => e.target === e.currentTarget && e.preventDefault()}
       onPointerUp={(e) => {
         if (e.pointerType !== "mouse" && !(e.target as HTMLElement).closest("button")) setColor((c) => !c);
       }}
     >
-      <Image src="/portrait/bw.webp" alt="" fill priority sizes="(min-width: 1024px) 40vw, 80vw" />
-      <Image className="fig__color" src="/portrait/color.webp" alt="" fill sizes="(min-width: 1024px) 40vw, 80vw" />
+      <Image src="/portrait/bw.webp" alt="" fill priority draggable={false} sizes="(min-width: 1024px) 40vw, 80vw" />
+      <Image className="fig__color" src="/portrait/color.webp" alt="" fill draggable={false} sizes="(min-width: 1024px) 40vw, 80vw" />
       <canvas ref={cv} aria-hidden="true" />
       <span className="sr-only">Portrait of Sahil Karande in a burgundy blazer and black shirt, arms crossed.</span>
       <button className="fig__card" aria-haspopup="dialog" onClick={() => setCard((n) => n + 1)}>

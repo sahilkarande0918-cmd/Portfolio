@@ -102,3 +102,17 @@ test("no horizontal page overflow", async ({ page }) => {
     expect(over, path).toBeLessThanOrEqual(1);
   }
 });
+
+test("the portrait is fixed in the page: normal cursor, can't be dragged or selected", async ({ page }) => {
+  await page.goto("/");
+  const fig = page.locator(".fig");
+  await expect(fig).toHaveCSS("cursor", "default");
+  await expect(fig).toHaveCSS("user-select", "none");
+  for (const img of await fig.locator("img").all()) {
+    await expect(img).toHaveAttribute("draggable", "false");
+    await expect(img).toHaveCSS("pointer-events", "none");
+  }
+  // a drag that starts on the photo is cancelled, so no floating copy appears
+  const cancelled = await fig.evaluate((el) => !el.dispatchEvent(new DragEvent("dragstart", { bubbles: true, cancelable: true })));
+  expect(cancelled).toBe(true);
+});

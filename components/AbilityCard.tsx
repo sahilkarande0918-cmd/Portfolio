@@ -124,7 +124,7 @@ export default function AbilityCard({ openKey }: { openKey: number }) {
               <div className="hc__frame">
                 <p className="hc__name">{site.name}</p>
                 <div className="hc__win">
-                  <Image src="/portrait/color.webp" alt="" width={900} height={1300} sizes="22rem" />
+                  <Image src="/portrait/color.webp" alt="" width={900} height={1300} sizes="22rem" draggable={false} />
                 </div>
                 <p className="hc__role">AI Systems Builder · Pune</p>
                 <ul className="hc__rows">
