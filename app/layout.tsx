@@ -1,0 +1,50 @@
+import type { Metadata, Viewport } from "next";
+import { Onest } from "next/font/google";
+import { site } from "@/content/site";
+import Header from "@/components/Header";
+import ThemeCord from "@/components/ThemeCord";
+import ContactDialog from "@/components/ContactDialog";
+import SmoothScroll from "@/components/SmoothScroll";
+import Footer from "@/components/Footer";
+import "lenis/dist/lenis.css";
+import "./globals.css";
+import "./pages.css";
+
+const onest = Onest({ subsets: ["latin"], variable: "--font-onest", display: "swap" });
+
+export const metadata: Metadata = {
+  metadataBase: new URL(site.url),
+  title: { default: site.title, template: `%s — ${site.name}` },
+  description: site.description,
+  authors: [{ name: site.name, url: site.github }],
+  openGraph: { type: "profile", siteName: site.name, title: site.title, description: site.description, locale: "en_IN" },
+  twitter: { card: "summary_large_image", title: site.title, description: site.description },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#1a1818",
+};
+
+// runs before first paint so the saved mode never flashes; dark until the cord is pulled
+const modeScript = `try{var m=localStorage.getItem('mode');if(m!=='light')m='dark';document.documentElement.dataset.mode=m}catch(e){document.documentElement.dataset.mode='dark'}requestAnimationFrame(function(){document.documentElement.classList.add('ready')})`;
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="en" className={onest.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: modeScript }} />
+      </head>
+      <body>
+        <a className="skip" href="#main">
+          Skip to content
+        </a>
+        <SmoothScroll />
+        <Header />
+        <ThemeCord />
+        <main id="main">{children}</main>
+        <Footer />
+        <ContactDialog />
+      </body>
+    </html>
+  );
+}
