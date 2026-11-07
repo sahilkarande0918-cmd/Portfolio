@@ -13,7 +13,8 @@
 - Ability card (tilt, drag, F/double-click/Flip, Escape/Close, embers only while open).
 - Contact: four-step enquiry ending in an email draft (no fake "sent").
 - Lenis smooth scrolling on fine pointers; native on touch.
-- SEO: metadata, OG image, favicon, sitemap, robots.
+- SEO: metadata, OG image, favicon, sitemap, robots, Person schema linking GitHub and LinkedIn.
+- GitHub and LinkedIn buttons in the header on every page (and in the menu, footer and card).
 
 ## Verification
 - `tsc`, `eslint`, `next build` clean (31 static routes).
@@ -22,5 +23,4 @@
 - Visual review: `scripts/shots.mjs` (desktop dark/light + phone).
 
 ## Open
-- Drishti 2.0 and Veris app screenshots wanted.
-- Confirm Hack4Humanity prize project, B.Tech start month, and that the contact email may be public.
+- Confirm B.Tech start month.

@@ -44,6 +44,20 @@ export default function Device({ p, flip = false, eager = false }: { p: Project;
         </div>
       </div>
     );
+  if (p.icon)
+    return (
+      <div className="stage stage--icon">
+        <div className="appicon">
+          <Image src={p.icon} alt={`${p.title} app icon`} width={384} height={384} sizes="12rem" priority={eager} />
+          <p>{p.title}</p>
+          <ul>
+            {p.features.map((f) => (
+              <li key={f}>{f}</li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    );
   return (
     <div className="stage">
       <div className="spec">

@@ -97,6 +97,11 @@ html[data-mode="dark"] :focus-visible { outline-color: var(--accent-from); }
 .clock__time { min-width: 4rem; font-weight: 500; color: var(--foreground); }
 .clock__sep { color: rgba(var(--fg-rgb), 0.3); }
 .clock__date { font-weight: 500; }
+.social { display: flex; gap: 0.5rem; }
+.social a { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; color: rgba(var(--fg-rgb), 0.75); transition: color 0.2s, background 0.25s, transform 0.3s var(--e-spring); }
+.social a:hover { color: var(--foreground); background: var(--chip-bg-h); transform: translateY(-2px); }
+.social svg { width: 1.05rem; height: 1.05rem; }
+@media (max-width: 767.98px) { .social { display: none; } }
 .menu-btn { min-height: 44px; min-width: 44px; transition: background 0.25s; }
 .menu-btn:hover { background: var(--chip-bg-h); }
 .menu-btn > span { display: flex; align-items: center; gap: 0.5rem; padding: 0.6rem 1.1rem; font-size: 0.875rem; font-weight: 500; text-transform: uppercase; letter-spacing: 0.05em; }

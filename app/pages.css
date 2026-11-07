@@ -278,3 +278,13 @@
 .hc__hint { font-family: var(--mono); font-size: 0.6875rem; letter-spacing: 0.14em; text-transform: uppercase; color: rgba(232, 228, 224, 0.6); text-align: center; }
 .hc__hint .ht { display: none; }
 @media (hover: none) { .hc__hint .hm { display: none; } .hc__hint .ht { display: inline; } }
+
+/* app icon in place of screenshots */
+.stage--icon { display: grid; place-items: center; }
+.appicon { display: grid; justify-items: center; gap: 1rem; padding: 2.5rem 2rem; border-radius: 1.75rem; max-width: 26rem; width: 100%;
+  background: radial-gradient(80% 70% at 50% 20%, color-mix(in srgb, var(--door, #6b5c5c) 35%, transparent), transparent 75%), var(--field); border: 1px solid var(--card-line); }
+.appicon img { width: min(11rem, 40vw); height: auto; border-radius: 23%; box-shadow: 0 30px 50px -22px rgba(0, 0, 0, 0.6), 0 2px 6px rgba(0, 0, 0, 0.25); transition: transform 0.6s var(--e-soft); }
+.card:hover .appicon img { transform: translateY(-4px) rotate(-2deg); }
+.appicon p { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.01em; }
+.appicon ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.4rem; }
+.appicon li { padding: 0.35rem 0.7rem; border-radius: 99px; border: 1px solid rgba(var(--fg-rgb), 0.14); font-size: 0.78rem; font-weight: 500; color: rgba(var(--fg-rgb), 0.8); }

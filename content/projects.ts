@@ -36,6 +36,7 @@ export type Project = {
   device: Device;
   media: Media[];
   terminal?: string; // verified CLI output, quoted from the repository's own results
+  icon?: string; // app icon, shown when there are no screenshots
   limitations: string[];
   evidence: string[];
 };
@@ -167,6 +168,7 @@ remote connections: 0 (strace-verified)   disk: 8.6 GB`,
     contribution: "Repository owner; all commits in the Android repository are mine.",
     repo: gh("Drishti-2.0-app"),
     device: "phone",
+    icon: "/media/drishti/icon.webp",
     media: [],
     limitations: ["Assistive technology prototype — not a guarantee of safe navigation.", "Scene Q&A needs a network connection and an API key."],
     evidence: ["Drishti-2.0-app README", "drishti-web-app README (earlier prototype)"],
@@ -175,10 +177,10 @@ remote connections: 0 (strace-verified)   disk: 8.6 GB`,
     slug: "kisaanraksha",
     title: "KisaanRaksha",
     tagline: "An early warning for farmer financial distress, in Marathi on WhatsApp",
-    kind: "AI agent · Social good",
+    kind: "AI agent · 3rd prize, Hack4Humanity 2026",
     categories: ["ml-impact", "ai-agents"],
     featured: true,
-    status: "Hackathon prototype",
+    status: "3rd prize · Hack4Humanity 2026",
     year: "2026",
     problem: "Support for distressed farmers in Vidarbha and Marathwada arrives after the crisis. The warning signs — drought, prices, crop health, loan dates — are public data no one combines in time.",
     solution:
@@ -190,7 +192,7 @@ remote connections: 0 (strace-verified)   disk: 8.6 GB`,
     ],
     features: ["LightGBM Financial Stress Index", "Marathi voice via WhatsApp", "Officer alerts above FSI 75", "District heatmap dashboard"],
     stack: ["Python", "FastAPI", "FastMCP", "LightGBM", "Whisper", "Twilio", "Streamlit", "React"],
-    contribution: "Built for Hack4Humanity 2026, Track C; all 23 commits in the repository are mine.",
+    contribution: "Built for Hack4Humanity 2026 (Track C, AI for Societal Good), where it won 3rd prize; all 23 commits in the repository are mine.",
     repo: gh("Kisan-Raksha-project"),
     device: "phone",
     media: [shot("kisaanraksha", "alert", "A Marathi WhatsApp conversation showing a simulated critical FSI alert for Amravati", "Kisan-Raksha-project repository, docs/assets", "2026-11-07", 1128, 826)],
@@ -198,7 +200,7 @@ remote connections: 0 (strace-verified)   disk: 8.6 GB`,
       "The FSI model is trained on a synthetic dataset built from public signals; the WhatsApp alert shown is a simulation replaying a past pattern.",
       "Reported metrics (MAE 3.75, R² 0.94) are on held-out talukas of that synthetic data.",
     ],
-    evidence: ["Kisan-Raksha-project README", "model/training_metrics.json", "model/fairlearn_report.md"],
+    evidence: ["Kisan-Raksha-project README", "model/training_metrics.json", "model/fairlearn_report.md", "Hack4Humanity 2026 3rd-prize certificate"],
   },
   {
     slug: "agent-fleet",
@@ -283,8 +285,11 @@ remote connections: 0 (strace-verified)   disk: 8.6 GB`,
     stack: ["Python", "FastAPI", "Expo / React Native", "Groq"],
     contribution: "All 66 commits in the repository are mine.",
     repo: gh("Veris"),
-    device: "terminal",
-    media: [],
+    device: "phone",
+    media: [
+      shot("veris", "home", "Veris home screen on Android: paste a link, SMS, UPI id or number to check it, with share-sheet, email forensics, QR and screenshot checks", "Owner-supplied Android screenshot", "2026-11-07", 640, 1294),
+      shot("veris", "splash", "Veris welcome screen: works offline, on-device", "Owner-supplied Android screenshot", "2026-11-07", 640, 1294),
+    ],
     terminal: `$ python scripts/demo_all.py
 homoglyph lookalike domain ........ caught, cited
 Marathi explanation ............... generated (explains only)

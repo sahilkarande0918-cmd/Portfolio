@@ -114,7 +114,7 @@ export const story: Chapter[] = [
     org: "Terrier Cyber Quest · SIH 2026 · Hack4Humanity · Hacktoberfest",
     points: [
       "Hemostat, AeroPulse AI, Veris, KisaanRaksha, Agent Fleet and OSS-Forge: each with a README that says what was tested, and on what data.",
-      "3rd prize at Hack4Humanity 2026 (IEEE Pune Section), awarded August 2026.",
+      "KisaanRaksha won 3rd prize at Hack4Humanity 2026 (IEEE Pune Section) in August 2026.",
     ],
     tint: ["178,106,148", "226,122,58"],
   },

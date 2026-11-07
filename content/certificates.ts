@@ -9,7 +9,7 @@ export type CertType = "Course" | "Accreditation" | "Internship" | "Prize" | "Fi
 type Meta = { title: string; issuer: string; type: CertType; date?: string; verify?: string; note?: string; series?: string };
 
 const meta: Record<string, Meta> = {
-  "Hack4Humanity 3rd prize.pdf": { title: "Hack4Humanity 2026 — 3rd Prize", issuer: "IEEE Pune Section", type: "Prize", date: "2026-08-08" },
+  "Hack4Humanity 3rd prize.pdf": { title: "Hack4Humanity 2026 — 3rd Prize", issuer: "IEEE Pune Section", type: "Prize", date: "2026-08-08", note: "Awarded for KisaanRaksha." },
   "E-summit certificate.pdf": { title: "Top Finalist, Innoventure 2026 (E-Summit'26)", issuer: "MIT AOE E-Cell", type: "Finalist", date: "2026-02" },
   "Cisco Internship Certificate .pdf": {
     title: "Virtual Internship Program in Artificial Intelligence",

@@ -10,6 +10,6 @@
 | Smooth scroll | `lenis` | MIT | |
 
 ## Still wanted
-- Drishti 2.0 Android screenshots (phone frame is ready).
-- Veris Android app screenshots (currently shows the verified terminal demo).
+- Drishti 2.0 screenshots, if you later want them instead of the icon.
+
 - A résumé PDF, if you want a résumé link.

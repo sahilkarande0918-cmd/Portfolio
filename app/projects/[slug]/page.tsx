@@ -126,6 +126,15 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           )}
         </div>
 
+        {p.terminal && p.device !== "terminal" && (
+          <section className="case__media" aria-labelledby="termTitle">
+            <h2 className="lbl" id="termTitle">
+              Verified demo output
+            </h2>
+            <Device p={{ ...p, device: "terminal" }} />
+          </section>
+        )}
+
         {p.media.length > 0 && (
           <section className="case__media" aria-labelledby="shotsTitle">
             <h2 className="lbl" id="shotsTitle">
