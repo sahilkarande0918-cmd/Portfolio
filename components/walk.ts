@@ -19,7 +19,9 @@ export function cover(fade = 0) {
     el.style.opacity = "0";
     el.getBoundingClientRect();
   }
-  el.style.opacity = "1";
+  // 99%, not 100%: a fully opaque layer makes Chrome treat everything under it as hidden and skip drawing
+  // it, so the page underneath would only be drawn — mid-animation — once the cover starts to lift
+  el.style.opacity = "0.99";
   return new Promise<void>((r) => setTimeout(r, fade));
 }
 

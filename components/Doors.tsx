@@ -19,6 +19,8 @@ import { cover, EXIT_KEY, reduced, settle, spring, uncover, walking } from "./wa
 const ANG = 70; // fully open, swung into the room
 const HOVER = 0.1;
 const ZOOM_MS = 1500;
+const BACK_MS = 1300; // backing out, as on the reference
+const EXIT_ZOOM = 3.2; // where the back-out starts
 const IN_OUT: [number, number, number, number] = [0.65, 0, 0.35, 1]; // cubic in-out
 
 /** the walk-through camera at progress e (0 at the wall, 1 inside the doorway) */
@@ -91,32 +93,39 @@ export default function Doors({ doors }: { doors: Door[] }) {
         setSeen(true);
         s.classList.remove("pre");
         s.classList.add("in");
-        // promote the wall and let it paint once at its normal size while the screen is still covered:
-        // the zoomed frames then reuse that picture instead of re-rasterising the wall at 14x
-        s.dataset.lift = s.dataset.walk = "";
+        // promote the wall and let it be drawn in full, at its normal size, while the screen is still covered
+        // (the cover is 99% opaque so Chrome doesn't treat the wall as hidden and skip drawing it). Only then
+        // jump into the doorway: every zoomed frame reuses that finished drawing, so the move never waits on
+        // the GPU to draw newly revealed parts of the wall.
+        s.dataset.lift = s.dataset.walk = s.dataset.exit = "";
         leaves.current[i].jump(1);
         const g = geometry(i);
-        // the camera path: the same exponential zoom as walking in, played backwards
-        const at = (t: number) => camera(g, 1 - t); // the walk-in, played backwards
-        requestAnimationFrame(() =>
-          requestAnimationFrame(() => {
-            s.style.transformOrigin = g.origin;
-            s.style.transform = at(0);
-            // the page behind has only just mounted: wait, still covered, until the main thread is free
-            settle(650).then(async () => {
-              uncover(450);
-              // same duration and the same gentle in-out curve as walking in, so both directions feel alike
-              await animate(0, 1, { duration: ZOOM_MS / 1000, ease: IN_OUT, onUpdate: (t) => (s.style.transform = at(t)) });
-              s.style.transform = s.style.transformOrigin = "";
-              delete s.dataset.walk;
-              delete s.dataset.lift;
-              leaves.current[i].set(0);
-              walking(false);
-              busy.current = false;
-              document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
-            });
-          }),
-        );
+        // the walk-in played backwards, but starting at ~3x: above that the screen is nothing but the dark
+        // doorway gap (the cover lifting looks the same), and the 14x end of the zoom needs more GPU tile
+        // memory than Chrome allows, so it evicts parts of the wall and redraws them mid-move
+        const eMax = Math.min(1, Math.log(EXIT_ZOOM) / Math.log(g.sEnd));
+        const at = (t: number) => camera(g, eMax * (1 - t));
+        settle(250).then(async () => {
+          s.style.transformOrigin = g.origin;
+          // still covered: step into the doorway the way the walk-in does, as a quick continuous zoom up
+          // from 1x. Jumping straight to the 14x frame makes Chrome redraw the wall at 14x detail, and then
+          // every part of it the camera reveals on the way out has to be drawn at that size, mid-move.
+          await animate(0, 1, { duration: 0.16, ease: "linear", onUpdate: (e) => (s.style.transform = camera(g, eMax * e)) });
+          // straight on, with no pause (a still zoomed frame is when Chrome decides to redraw the wall sharper).
+          // The cover lifts a beat after the camera starts: the GPU's first frames of the zoomed wall happen in
+          // the dark, and the camera's slow start means nothing is missed.
+          setTimeout(() => uncover(450), 80);
+          // the same gentle in-out curve as walking in
+          await animate(0, 1, { duration: BACK_MS / 1000, ease: IN_OUT, onUpdate: (t) => (s.style.transform = at(t)) });
+          s.style.transform = s.style.transformOrigin = "";
+          delete s.dataset.walk;
+          delete s.dataset.lift;
+          delete s.dataset.exit;
+          leaves.current[i].set(0);
+          walking(false);
+          busy.current = false;
+          document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
+        });
       });
     } else if (exit || (last && location.hash === "#work")) {
       // motion off, or the browser's Back button: just stand in front of the same door again

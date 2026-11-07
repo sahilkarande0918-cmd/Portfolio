@@ -242,9 +242,13 @@ html[data-mode="dark"] .hero::before { opacity: 1; }
 .doors::before { content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.35;
   background: url("/textures/plaster.webp") 0 0 / 256px 256px; }
 html[data-mode="dark"] .doors::before { opacity: 0.18; }
-.doors[data-lift] { will-change: transform; }
+.doors[data-lift], .doors[data-lift] .door { will-change: transform; }
 .doors[data-walk] { overflow: visible; z-index: 6; box-shadow: 0 0 0 16vmax var(--wall); }
 .doors[data-walk]::before, .doors[data-walk] .doors__links { opacity: 0; }
+/* backing out of a room, the rest of the freshly loaded page (hero photos, story, footer — all off screen)
+   would otherwise get its first drawing on the GPU in the middle of the camera move. It waits until the
+   camera has stopped. */
+main:has(> .doors[data-exit]) > :not(.doors), body:has(.doors[data-exit]) .sfw { visibility: hidden; }
 .doors__wall { position: relative; display: flex; flex-direction: column; align-items: center; gap: 3.6rem; }
 .paint { position: relative; z-index: 3; pointer-events: none; text-align: center; font-weight: 700; letter-spacing: -0.03em; line-height: 0.95; color: var(--paint);
   font-size: 2.6rem; max-width: 14ch; text-wrap: balance; padding: 0.08em 0 0.14em; clip-path: inset(-20% -6% -30% -6%); }

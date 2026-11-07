@@ -10,7 +10,8 @@
 .backd svg { width: 1rem; height: 1rem; }
 
 .roomv { position: relative; min-height: 100svh; padding-bottom: 6rem; }
-.roomv__glow { position: fixed; inset: 0; z-index: 80; pointer-events: none; background: var(--room); animation: glowOut 0.7s ease 0.15s forwards; }
+/* 99% opaque so the room underneath is drawn while it is hidden, not in a burst as the glow lifts */
+.roomv__glow { position: fixed; inset: 0; z-index: 80; pointer-events: none; background: var(--room); opacity: 0.99; animation: glowOut 0.7s ease 0.15s forwards; }
 .roomv > .wrap, .roomv > .worlds, .roomv > .w-jump { animation: roomIn 0.9s var(--e-soft) 0.3s backwards; }
 @keyframes roomIn { from { opacity: 0; transform: translateY(1.25rem); } }
 @keyframes glowOut { to { opacity: 0; visibility: hidden; } }

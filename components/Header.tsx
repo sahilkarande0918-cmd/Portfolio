@@ -41,6 +41,20 @@ export default function Header() {
   const back = backFor(path);
   const router = useRouter();
 
+  // in a room, once idle: get the door wall ready (its page and its plaster) so walking back out to it
+  // never waits on a download or a first-time image decode
+  useEffect(() => {
+    if (path === "/") return;
+    const warm = () => {
+      router.prefetch("/");
+      const img = new Image();
+      img.src = "/textures/plaster.webp";
+      img.decode?.().catch(() => {});
+    };
+    const id = "requestIdleCallback" in window ? requestIdleCallback(warm, { timeout: 2000 }) : setTimeout(warm, 1200);
+    return () => ("cancelIdleCallback" in window ? cancelIdleCallback(id as number) : clearTimeout(id));
+  }, [path, router]);
+
   // arriving in a room through a door: the room-coloured layer lifts as the page fades up from it
   useEffect(() => {
     if (path === "/") return;
