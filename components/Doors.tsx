@@ -197,10 +197,6 @@ export default function Doors({ doors }: { doors: Door[] }) {
     setOn(-1);
     const u = unit(i);
     leaves.current.forEach((l, k) => k !== i && l.set(0));
-    // switch into walking mode now, while the door swings: the layer promotion, the wall's surround and the
-    // header fading out get painted during the swing, so the zoom starts with nothing left to paint
-    walking(true);
-    sec.current!.dataset.lift = sec.current!.dataset.walk = "";
     u.classList.add("press");
     setTimeout(() => u.classList.remove("press"), 380);
     setTimeout(() => leaves.current[i].set(1), 170);
@@ -209,6 +205,8 @@ export default function Doors({ doors }: { doors: Door[] }) {
 
   function through(i: number, href: string) {
     const s = sec.current!;
+    walking(true);
+    s.dataset.lift = s.dataset.walk = "";
     const g = geometry(i);
     s.style.transformOrigin = g.origin;
     let handed = false;
