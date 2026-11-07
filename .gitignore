@@ -11,3 +11,6 @@ playwright-report/
 .claude/settings.local.json
 __pycache__/
 .claude/
+
+.vercel
+.env*
