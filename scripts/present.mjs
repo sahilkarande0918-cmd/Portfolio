@@ -32,7 +32,7 @@ const markers = () => {
   }).observe(document.documentElement, { subtree: true, attributes: true, childList: true, attributeFilter: ["style", "class"] });
 };
 
-async function measure(p, cdp, label, act, wait, from, to) {
+async function measure(p, cdp, label, act, wait, from, to, tail = 0) {
   const events = [];
   const onData = (d) => events.push(...d.value);
   cdp.on("Tracing.dataCollected", onData);
@@ -44,7 +44,7 @@ async function measure(p, cdp, label, act, wait, from, to) {
   await done;
   cdp.off("Tracing.dataCollected", onData);
   const mk = (n) => events.find((e) => e.name === "TimeStamp" && e.args?.data?.message === n)?.ts;
-  const start = typeof from === "string" ? mk(from) : from(events), end = mk(to) ?? Infinity;
+  const start = typeof from === "string" ? mk(from) : from(events), end = (mk(to) ?? Infinity) + tail * 1000;
   const swaps = events.filter((e) => e.name === "Display::DrawAndSwap").map((e) => e.ts).sort((a, c) => a - c);
   const vis = swaps.filter((t) => t >= start && t <= end);
   const gaps = vis.slice(1).map((t, i) => (t - vis[i]) / 1000);
@@ -91,8 +91,8 @@ for (let r = 0; r < runs; r++) {
   await door.hover();
   await p.waitForTimeout(700);
   await p.evaluate(markers);
-  // walking in: from the click through the zoom to the room page fully shown (1.2 s after it mounts)
-  await measure(p, cdp, `run ${r + 1} IN `, () => door.click(), 4200, (ev) => ev.find((e) => e.name === "EventDispatch" && e.args?.data?.type === "click")?.ts ?? 0, "room");
+  // walking in: from the click through the zoom until the room has fully faded up (1.3 s after it mounts)
+  await measure(p, cdp, `run ${r + 1} IN `, () => door.click(), 4600, (ev) => ev.find((e) => e.name === "EventDispatch" && e.args?.data?.type === "click")?.ts ?? 0, "room", 1300);
   await p.close();
 }
 await b.close();
