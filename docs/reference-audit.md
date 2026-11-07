@@ -28,7 +28,9 @@ Inspected 7 Nov 2026 in the in-app browser at 1440×900 (and 800×600), plus the
 ## Implementation choices (ours)
 
 - Next.js App Router, plain CSS with the measured tokens, no animation library: CSS transitions, WAAPI for the notebook and wall zoom, canvas for cord/portrait/dials/embers, Lenis for wheel smoothing.
-- Our doors: AI & Agents (navy), Products & Web (plum), ML & Impact (sage), Tamrivo (burnt orange); fifth door Certificates (deep teal) reached with an arrow, keyboard focus, or the links under the wall.
+- Our doors: AI & Agents (navy), Products & Web (plum), ML & Impact (sage), Tamrivo (burnt orange), Certificates (deep teal) — all five on one wall (owner's request).
+- Door motion follows the reference source: spring leaf (tension 120, friction 14) swinging into the room, 7° on hover / 70° open; enter = lever press, swing at 170 ms, per-frame exponential zoom around the gap from 760 ms over 1.5 s (in-out cubic); exit = fade to the room colour (450 ms), back out over 1.3 s (out cubic), door springs shut.
+- Parallax: `data-speed` layers moved with `translate` on the Lenis frame (hero text/portrait, wall heading, room intros, case-study heads, footer).
 - Default theme is **dark** until the cord is pulled (owner's request); the choice persists.
 - No loader screen (the brief rules out a fake progress loader), no analytics or cookie banner.
 - Room pages are real routes (`/work/*`, `/projects/*`, `/tamrivo`, `/certificates`) instead of embedded iframes.
@@ -37,5 +39,4 @@ Inspected 7 Nov 2026 in the in-app browser at 1440×900 (and 800×600), plus the
 ## Unverified / approximated
 
 - Exact cord stiffness and pull threshold (we use 46px stretch past rest and a rubber stop at 90px).
-- Exact wall-zoom easing and duration (we use 900ms `cubic-bezier(.55,0,.75,.2)` after a 760ms swing).
 - The reference's 3D card internals (it loads a WebGL engine); ours matches the visible layered result.

@@ -24,7 +24,7 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
     const drawBg = !matchMedia("(prefers-reduced-motion: reduce)").matches && matchMedia("(min-width: 768px)").matches;
     let raf = 0, W = 0, H = 0;
     const size = () => {
-      const dpr = Math.min(devicePixelRatio || 1, 1.5);
+      const dpr = 1; // faint hairlines: no need to draw them at retina density
       W = canvas.clientWidth;
       H = canvas.clientHeight;
       canvas.width = W * dpr;
@@ -75,7 +75,14 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
       setAt(idx);
       if (drawBg) dials(fp);
     };
-    const onScroll = () => raf || (raf = requestAnimationFrame(update));
+    // nothing runs while the story is off screen
+    let visible = false;
+    const io = new IntersectionObserver(([e]) => {
+      visible = e.isIntersecting;
+      if (visible) onScroll();
+    });
+    io.observe(sec.current!);
+    const onScroll = () => visible && !raf && (raf = requestAnimationFrame(update));
     size();
     update();
     addEventListener("scroll", onScroll, { passive: true });
@@ -84,6 +91,7 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
     addEventListener("modechange", onScroll);
     return () => {
       cancelAnimationFrame(raf);
+      io.disconnect();
       removeEventListener("scroll", onScroll);
       removeEventListener("resize", onResize);
       removeEventListener("modechange", onScroll);

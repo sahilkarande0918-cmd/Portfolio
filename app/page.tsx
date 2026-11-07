@@ -10,11 +10,11 @@ export default function Home() {
     <>
       <section id="home" className="hero" aria-label="Introduction">
         <div className="hero__vig" aria-hidden="true" />
-        <div className="hero__stage">
+        <div className="hero__stage" data-speed="0.1">
           <Portrait />
         </div>
         <div className="shell hero__content">
-          <div className="hero__left">
+          <div className="hero__left" data-speed="0.22">
             <p className="eyebrow rv" style={{ "--d": "200ms" } as React.CSSProperties}>
               {site.eyebrow}
             </p>

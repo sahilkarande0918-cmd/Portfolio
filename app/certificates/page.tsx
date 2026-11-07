@@ -14,7 +14,7 @@ export default function Certificates() {
     <div className="roomv roomv--lines" style={{ "--door": "#2b3a3a" } as React.CSSProperties}>
       <div className="roomv__glow" aria-hidden="true" />
       <div className="wrap">
-        <header className="intro">
+        <header className="intro" data-speed="0.14">
           <p className="lbl">Room · Courses, internships & prizes</p>
           <h1>Certificates</h1>
           <p>Every certificate is hung on the line as it is, and opens to the full document. Courses are courses, participation is participation — each is labelled for what it is.</p>

@@ -34,9 +34,10 @@ export default function Portrait() {
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
     const paint = (x: number, y: number) => {
-      const r = W * 0.11 / 3;
+      const r = W * 0.19 / 3; // a generous brush: the colour opens a wide patch, not a pinhole
       const g = mx.createRadialGradient(x / 3, y / 3, 0, x / 3, y / 3, r);
-      g.addColorStop(0, "rgba(0,0,0,.9)");
+      g.addColorStop(0, "rgba(0,0,0,.95)");
+      g.addColorStop(0.55, "rgba(0,0,0,.6)");
       g.addColorStop(1, "rgba(0,0,0,0)");
       mx.fillStyle = g;
       mx.beginPath();
@@ -46,7 +47,7 @@ export default function Portrait() {
     const frame = () => {
       // the trail fades out behind the cursor
       mx.globalCompositeOperation = "destination-out";
-      mx.fillStyle = "rgba(0,0,0,.035)";
+      mx.fillStyle = "rgba(0,0,0,.026)";
       mx.fillRect(0, 0, mask.width, mask.height);
       mx.globalCompositeOperation = "source-over";
       ctx.globalCompositeOperation = "source-over";
@@ -64,12 +65,12 @@ export default function Portrait() {
       if (e.pointerType !== "mouse") return;
       const r = el.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
       if (lx >= 0) {
-        const steps = Math.ceil(Math.hypot(x - lx, y - ly) / 8);
+        const steps = Math.ceil(Math.hypot(x - lx, y - ly) / 12);
         for (let s = 1; s <= steps; s++) paint(lx + ((x - lx) * s) / steps, ly + ((y - ly) * s) / steps);
       } else paint(x, y);
       lx = x;
       ly = y;
-      life = 150;
+      life = 190;
       if (!raf) raf = requestAnimationFrame(frame);
     };
     const leave = () => (lx = ly = -1);

@@ -84,6 +84,7 @@ test("certificates hang on lines and open full size", async ({ page }) => {
   await page.goto("/certificates");
   await expect(page.locator(".world")).toHaveCount(5);
   // the prints sway on their pegs, so they are never "stable" in Playwright's sense
+  await page.waitForTimeout(1200); // let the page hydrate and the scroll engine start
   await page.evaluate(() => scrollTo(0, document.getElementById("w-recognition")!.offsetTop));
   await page.waitForTimeout(600);
   await page.locator(".paper").first().click({ force: true });

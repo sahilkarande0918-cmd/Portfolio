@@ -19,7 +19,7 @@ export default function Tamrivo() {
     <div className="roomv tam" style={{ "--door": "#a4552c" } as React.CSSProperties}>
       <div className="roomv__glow" aria-hidden="true" />
       <div className="wrap">
-        <header className="intro">
+        <header className="intro" data-speed="0.14">
           <p className="lbl">
             <span className="tam__status">
               <i aria-hidden="true" />
@@ -54,7 +54,7 @@ export default function Tamrivo() {
           </h2>
           <ol className="tam__flow">
             {flow.map((f, i) => (
-              <li key={f.k}>
+              <li key={f.k} data-speed={(0.03 * (i + 1)).toFixed(2)}>
                 <span className="tam__n">{String(i + 1).padStart(2, "0")}</span>
                 <h3>{f.k}</h3>
                 <p>{f.t}</p>

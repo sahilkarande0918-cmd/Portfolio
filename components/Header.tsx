@@ -1,11 +1,12 @@
 "use client";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { site } from "@/content/site";
 import { bySlug } from "@/content/projects";
 import { useClock } from "./useClock";
 import { closeDialog, openDialog } from "./dialog";
+import { cover, EXIT_KEY, reduced, uncover, walking } from "./walk";
 
 export const nav = [
   { label: "Home", href: "/" },
@@ -39,6 +40,32 @@ export default function Header() {
   const menu = useRef<HTMLDialogElement>(null);
   const bar = useRef<HTMLElement>(null);
   const back = backFor(path);
+  const router = useRouter();
+
+  // arriving in a room through a door: the room-coloured layer lifts as the page fades up from it
+  useEffect(() => {
+    if (path === "/") return;
+    const t = setTimeout(() => {
+      uncover(0);
+      walking(false);
+    }, 60);
+    return () => clearTimeout(t);
+  }, [path]);
+
+  // leaving a room for the doors: fade into the room's darkness, then back out of the doorway on the wall
+  const room = path.match(/^\/(?:work\/([^/]+)|(tamrivo|certificates))$/);
+  const leave = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!room || back?.href !== "/#work" || e.metaKey || e.ctrlKey || e.shiftKey || reduced()) return;
+    e.preventDefault();
+    closeDialog(menu.current);
+    walking(true);
+    cover(450).then(() => {
+      try {
+        sessionStorage.setItem(EXIT_KEY, room[1] ?? room[2]);
+      } catch {}
+      router.push("/#work");
+    });
+  };
 
   useEffect(() => {
     const on = () => setStuck(scrollY > 24);
@@ -107,7 +134,7 @@ export default function Header() {
       </header>
 
       {back && (
-        <Link className="backd" href={back.href}>
+        <Link className="backd" href={back.href} onClick={leave}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <path d="M19 12H5M11 6l-6 6 6 6" />
           </svg>
@@ -132,7 +159,7 @@ export default function Header() {
           <ul>
             {[...(back ? [back] : []), ...nav].map((n, i) => (
               <li key={n.href + n.label}>
-                <Link className="navm__item" href={n.href} style={{ "--d": `${i * 50 + 80}ms` } as React.CSSProperties}>
+                <Link className="navm__item" href={n.href} onClick={n === back ? leave : undefined} style={{ "--d": `${i * 50 + 80}ms` } as React.CSSProperties}>
                   <small>{String(i + 1).padStart(2, "0")}</small>
                   <span>{n.label}</span>
                 </Link>

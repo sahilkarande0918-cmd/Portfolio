@@ -2,81 +2,167 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import type { Door } from "@/content/site";
+import { cover, EXIT_KEY, reduced, spring, uncover, walking } from "./walk";
 
 /*
-  Hover or focus cracks a door open and describes the room on the wall beside it. Activating it
-  presses the lever, swings the leaf on its hinge, then walks through: the whole wall scales up
-  around the opening until the room's light fills the screen, and the room's page takes over.
+  All five doors stand on one wall. Hovering cracks a door a few degrees into its room and describes
+  the room beside it. Activating it presses the lever, swings the leaf in on a spring, then walks
+  through: the whole wall scales up around the dark gap beside the open door until that darkness
+  fills the screen, and the room takes over in the same colour. Coming back plays it in reverse:
+  you back out of the doorway and the door swings shut behind you.
+
+  The zoom is driven per frame on a layer promoted before you click, so the browser scales the
+  existing picture instead of re-rendering the wall at its final size (which is what stutters).
   Each door is a real link, so it also works without script, in a new tab, or with motion off.
 */
+const ANG = 70; // fully open, swung into the room
+const HOVER = 0.1;
+const ZOOM_MS = 1500;
+const BACK_MS = 1300;
+
 export default function Doors({ doors }: { doors: Door[] }) {
   const router = useRouter();
   const sec = useRef<HTMLElement>(null);
   const wall = useRef<HTMLDivElement>(null);
   const view = useRef<HTMLDivElement>(null);
   const cursor = useRef<HTMLDivElement>(null);
+  const leaves = useRef<ReturnType<typeof spring>[]>([]);
+  const busy = useRef(false);
+  const raf = useRef(0);
   const [seen, setSeen] = useState(false);
   const [on, setOn] = useState(-1);
-  const [open, setOpen] = useState(-1);
-  const [press, setPress] = useState(-1);
-  const [reveal, setReveal] = useState(false);
   const [mobileAt, setMobileAt] = useState(0);
-  const phone = useSyncExternalStore(subPhone, () => matchMedia(PHONE).matches, () => false);
   const [pos, setPos] = useState<{ left: number; top: number } | null>(null);
-  const busy = useRef(false);
-  const d = doors[on] ?? null;
+  const phone = useSyncExternalStore(subPhone, () => matchMedia(PHONE).matches, () => false);
 
-  // the doors stand up as the wall scrolls into view
+  const unit = (i: number) => sec.current!.querySelectorAll<HTMLElement>(".unit")[i];
+
+  // where the zoom ends for door i: centred on the gap between the open leaf and the frame
+  function geometry(i: number) {
+    const u = unit(i);
+    const r = u.querySelector(".opening")!.getBoundingClientRect();
+    const dr = u.querySelector(".door")!.getBoundingClientRect();
+    const gapL = Math.min(Math.max(dr.right, r.left), r.right - 6);
+    const gw = Math.max(r.right - gapL, 10), gh = r.height;
+    const cx = (gapL + r.right) / 2, cy = r.top + gh * 0.5;
+    const sr = sec.current!.getBoundingClientRect();
+    return { origin: `${cx - sr.left}px ${cy - sr.top}px`, tx: innerWidth / 2 - cx, ty: innerHeight / 2 - cy, sEnd: Math.max(innerWidth / gw, innerHeight / gh) * 1.15 };
+  }
+
   useEffect(() => {
+    const s = sec.current!;
+    leaves.current = doors.map((_, i) => {
+      const u = unit(i), leaf = u.querySelector<HTMLElement>(".door")!;
+      // the frame's door stop: it never swings outward
+      return spring((x) => {
+        leaf.style.transform = `rotateY(${Math.max(0, x) * ANG}deg)`;
+        u.style.setProperty("--o", Math.max(0, x).toFixed(3));
+      });
+    });
+
+    // the doors stand up as the wall scrolls into view
     const io = new IntersectionObserver(([e]) => e.isIntersecting && (setSeen(true), io.disconnect()), { threshold: 0.2 });
-    io.observe(sec.current!);
-    // back from a room: stand in front of the same door again, focus on it
+    io.observe(s);
+
+    let exit: string | null = null, last: string | null = null;
     try {
-      const last = sessionStorage.getItem("door");
-      if (last && location.hash === "#work") {
-        const i = doors.findIndex((x) => x.slug === last);
-        requestAnimationFrame(() => {
-          if (i >= 4) setReveal(true);
-          setSeen(true);
-          document.getElementById(`door-${last}`)?.focus({ preventScroll: true });
-        });
-      }
+      exit = sessionStorage.getItem(EXIT_KEY);
+      last = sessionStorage.getItem("door");
+      sessionStorage.removeItem(EXIT_KEY);
       sessionStorage.removeItem("door");
     } catch {}
-    return () => io.disconnect();
+    const i = doors.findIndex((x) => x.slug === (exit ?? last));
+
+    if (exit && i >= 0 && !reduced()) {
+      // back from a room: stand in the doorway, then back out and let the door swing shut
+      busy.current = true;
+      const lenis = (window as unknown as { lenis?: { scrollTo(y: number, o: object): void } }).lenis;
+      const top = s.getBoundingClientRect().top + scrollY;
+      lenis?.scrollTo(top, { immediate: true, force: true });
+      scrollTo(0, top);
+      requestAnimationFrame(() => {
+        setSeen(true);
+        s.classList.remove("pre");
+        s.classList.add("in");
+        s.dataset.lift = s.dataset.walk = "";
+        leaves.current[i].jump(1);
+        const g = geometry(i);
+        s.style.transformOrigin = g.origin;
+        s.style.transform = `translate(${g.tx}px, ${g.ty}px) scale(${g.sEnd})`;
+        requestAnimationFrame(() => {
+          uncover(380);
+          const t0 = performance.now();
+          const step = (now: number) => {
+            const p = Math.min(1, (now - t0) / BACK_MS), e = 1 - Math.pow(1 - p, 3);
+            s.style.transform = `translate(${g.tx * (1 - e)}px, ${g.ty * (1 - e)}px) scale(${Math.exp(Math.log(g.sEnd) * (1 - e))})`;
+            if (p < 1) raf.current = requestAnimationFrame(step);
+            else {
+              s.style.transform = s.style.transformOrigin = "";
+              delete s.dataset.walk;
+              delete s.dataset.lift;
+              leaves.current[i].set(0);
+              walking(false);
+              busy.current = false;
+              document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
+            }
+          };
+          raf.current = requestAnimationFrame(step);
+        });
+      });
+    } else if (exit || (last && location.hash === "#work")) {
+      // motion off, or the browser's Back button: just stand in front of the same door again
+      uncover(0);
+      walking(false);
+      requestAnimationFrame(() => {
+        setSeen(true);
+        if (i >= 0) document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
+      });
+    }
+    return () => {
+      io.disconnect();
+      cancelAnimationFrame(raf.current);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doors]);
 
   // phones: the description follows whichever door is centred in the swipe row
   useEffect(() => {
     const v = view.current!;
     const onScroll = () => {
-      if (getComputedStyle(v).overflowX !== "auto") return;
       const units = [...v.querySelectorAll<HTMLElement>(".unit")];
       const c = v.scrollLeft + v.clientWidth / 2;
       let best = 0, bd = Infinity;
-      units.forEach((u, i) => {
+      units.forEach((u, k) => {
         const m = Math.abs(u.offsetLeft + u.offsetWidth / 2 - c);
         if (m < bd) {
           bd = m;
-          best = i;
+          best = k;
         }
       });
       setMobileAt(best);
     };
     v.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      v.removeEventListener("scroll", onScroll);
-    };
+    return () => v.removeEventListener("scroll", onScroll);
   }, []);
 
-  function focusDoor(i: number, el: HTMLElement | null) {
+  function hover(i: number, el: HTMLElement) {
     if (busy.current) return;
+    // promote the wall to its own layer before any click, so the zoom has nothing heavy left to do
+    sec.current!.dataset.lift = "";
+    leaves.current.forEach((l, k) => l.set(k === i ? HOVER : 0));
     setOn(i);
-    if (!el || !wall.current || matchMedia("(max-width: 767.98px)").matches) return setPos(null);
+    if (phone || !wall.current) return setPos(null);
+    // the description sits centred in the wall space beside the door, over the faded doors
     const w = wall.current.getBoundingClientRect(), r = el.getBoundingClientRect();
-    const right = r.left - w.left + r.width / 2 < w.width / 2;
-    const infoW = Math.min(352, w.width * 0.3);
-    setPos({ left: right ? r.right - w.left + w.width * 0.06 : r.left - w.left - w.width * 0.06 - infoW, top: r.top - w.top + r.height * 0.3 });
+    const infoW = Math.min(352, w.width * 0.28);
+    const right = r.left + r.width / 2 < w.left + w.width / 2;
+    const left = right ? r.right + (w.right - r.right - infoW) / 2 : w.left + (r.left - w.left - infoW) / 2;
+    setPos({ left: left - w.left, top: r.top - w.top + r.height * 0.3 });
+  }
+  function unhover() {
+    if (busy.current) return;
+    leaves.current.forEach((l) => l.set(0));
+    setOn(-1);
   }
 
   function enter(i: number, e: React.MouseEvent<HTMLAnchorElement>) {
@@ -87,33 +173,41 @@ export default function Doors({ doors }: { doors: Door[] }) {
     try {
       sessionStorage.setItem("door", door.slug);
     } catch {}
-    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return router.push(door.href);
+    if (reduced()) return router.push(door.href);
     busy.current = true;
     router.prefetch(door.href);
-    setOn(i);
-    setPress(i);
     cursor.current?.classList.remove("on");
-    setTimeout(() => setOpen(i), 180);
-    // walk through: scale the wall around the opening until the room fills the screen
-    setTimeout(() => {
-      const opening = document.getElementById(`door-${door.slug}`)?.querySelector(".opening") as HTMLElement | null;
-      const w = wall.current!;
-      const r = (opening ?? w).getBoundingClientRect(), wr = w.getBoundingClientRect();
-      const ox = r.left - wr.left + r.width * 0.62, oy = r.top - wr.top + r.height * 0.55;
-      const scale = Math.max(innerWidth / (r.width * 0.5), innerHeight / (r.height * 0.6)) * 1.3;
-      sec.current!.classList.add("through");
-      w.style.transformOrigin = `${ox}px ${oy}px`;
-      w.animate([{ transform: "scale(1)" }, { transform: `scale(${scale})` }], { duration: 900, easing: "cubic-bezier(.55,0,.75,.2)", fill: "forwards" });
-      const passage = document.createElement("div");
-      passage.className = "passage";
-      passage.style.background = `radial-gradient(70% 45% at 55% 30%, ${door.color}, #0d0b0a 120%)`;
-      document.body.appendChild(passage);
-      setTimeout(() => passage.classList.add("on"), 520);
-      setTimeout(() => {
-        router.push(door.href);
-        setTimeout(() => passage.remove(), 900);
-      }, 880);
-    }, 760);
+    setOn(-1);
+    const u = unit(i);
+    leaves.current.forEach((l, k) => k !== i && l.set(0));
+    u.classList.add("press");
+    setTimeout(() => u.classList.remove("press"), 380);
+    setTimeout(() => leaves.current[i].set(1), 170);
+    setTimeout(() => through(i, door.href), 760);
+  }
+
+  function through(i: number, href: string) {
+    const s = sec.current!;
+    walking(true);
+    s.dataset.lift = s.dataset.walk = "";
+    const g = geometry(i);
+    s.style.transformOrigin = g.origin;
+    const ease = (x: number) => (x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+    let t0 = 0, handed = false;
+    const step = (now: number) => {
+      t0 ||= now;
+      const p = Math.min(1, (now - t0) / ZOOM_MS), e = ease(p);
+      const sc = Math.exp(Math.log(g.sEnd) * e); // an even speed of approach
+      const f = Math.min(1, e * 1.6); // the door drifts to the centre early on
+      s.style.transform = `translate(${g.tx * f}px, ${g.ty * f}px) scale(${sc})`;
+      // the moment the room's darkness covers the screen, the room takes over: same colour, no blank
+      if (!handed && (sc >= g.sEnd / 1.15 || p >= 1)) {
+        handed = true;
+        cover(0).then(() => router.push(href));
+      }
+      if (p < 1) raf.current = requestAnimationFrame(step);
+    };
+    raf.current = requestAnimationFrame(step);
   }
 
   // "Click to enter" badge sits exactly on the pointer
@@ -124,16 +218,16 @@ export default function Doors({ doors }: { doors: Door[] }) {
     c.classList.add("on");
   };
 
-  const di = phone ? doors[mobileAt] : d;
+  const di = phone ? doors[mobileAt] : (doors[on] ?? null);
 
   return (
     <section
       id="work"
       ref={sec}
-      className={`doors${seen ? " in" : " pre"}${on >= 0 ? " focus" : ""}${reveal ? " reveal" : ""}`}
+      className={`doors${seen ? " in" : " pre"}${on >= 0 && !phone ? " focus" : ""}`}
       aria-labelledby="doorsTitle"
       onPointerLeave={() => {
-        if (!busy.current) setOn(-1);
+        unhover();
         cursor.current?.classList.remove("on");
       }}
     >
@@ -141,10 +235,10 @@ export default function Doors({ doors }: { doors: Door[] }) {
         <h2 className="sr-only" id="doorsTitle">
           My work, one door per room
         </h2>
-        <p className="paint" aria-hidden="true">
+        <p className="paint" aria-hidden="true" data-speed="0.12">
           Every door, a room of work
         </p>
-        <div className={`dinfo${di ? " on" : ""}`} style={pos ? { left: pos.left, top: pos.top } : undefined} aria-live="polite">
+        <div className={`dinfo${di ? " on" : ""}`} style={pos && !phone ? { left: pos.left, top: pos.top } : undefined} aria-live="polite">
           {di && (
             <div key={di.slug}>
               <h3 className="dinfo__h">{di.name}</h3>
@@ -160,23 +254,15 @@ export default function Doors({ doors }: { doors: Door[] }) {
         <div className="doors__viewport" ref={view}>
           <ul className="doors__row">
             {doors.map((door, i) => (
-              <li
-                key={door.slug}
-                className={`unit${i >= 4 ? " unit--extra" : ""}${on === i ? " on" : ""}${open === i ? " open" : ""}${press === i ? " press" : ""}`}
-                style={{ "--i": i, "--door": door.color, "--door-dk": door.dark } as React.CSSProperties}
-              >
+              <li key={door.slug} className={`unit${on === i ? " on" : ""}`} style={{ "--i": i, "--door": door.color, "--door-dk": door.dark } as React.CSSProperties}>
                 <a
                   id={`door-${door.slug}`}
                   href={door.href}
                   className="doorway"
                   aria-label={`Open the ${door.name} door`}
-                  onMouseEnter={(e) => focusDoor(i, e.currentTarget)}
-                  onFocus={(e) => {
-                    // keyboard focus walks the wall along to doors that are out of view
-                    if (!phone && (i >= 4) !== reveal && (i >= 4 || i === 0)) setReveal(i >= 4);
-                    focusDoor(i, e.currentTarget);
-                  }}
-                  onBlur={() => !busy.current && setOn(-1)}
+                  onMouseEnter={(e) => hover(i, e.currentTarget)}
+                  onFocus={(e) => e.currentTarget.matches(":focus-visible") && hover(i, e.currentTarget)}
+                  onBlur={unhover}
                   onPointerMove={moveCursor}
                   onPointerLeave={() => cursor.current?.classList.remove("on")}
                   onClick={(e) => enter(i, e)}
@@ -199,16 +285,6 @@ export default function Doors({ doors }: { doors: Door[] }) {
               </li>
             ))}
           </ul>
-          <button className="doors__nav doors__nav--next" onClick={() => setReveal(true)} disabled={reveal} aria-label="Slide along the wall to the Certificates door">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M5 12h14M13 6l6 6-6 6" />
-            </svg>
-          </button>
-          <button className="doors__nav doors__nav--prev" onClick={() => setReveal(false)} disabled={!reveal} aria-label="Slide back along the wall">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M19 12H5M11 6l-6 6 6 6" />
-            </svg>
-          </button>
         </div>
         <p className="doors__dots" aria-hidden="true">
           {doors.map((x, i) => (
@@ -216,8 +292,7 @@ export default function Doors({ doors }: { doors: Door[] }) {
           ))}
         </p>
         <p className="doors__hint" aria-hidden="true">
-          <span className="hint-desk">{reveal ? "← Slide back for the other rooms" : "One more door along the wall →"}</span>
-          <span className="hint-touch">Swipe along the wall</span>
+          Swipe along the wall
         </p>
       </div>
       <nav className="shell doors__links" aria-label="Rooms">

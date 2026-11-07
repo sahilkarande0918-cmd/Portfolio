@@ -4,7 +4,8 @@
 - Reference studied in the browser and from its page source (`docs/reference-audit.md`).
 - Hero: Onest, measured tokens, both themes (dark by default until the cord is pulled), live Pune clock, 3D flip notebook, b/w portrait with colour painted along the cursor trail + a colour toggle for touch/keyboard, ability-card tag, status hairline.
 - Pull cord: canvas verlet rope, drag past travel toggles once per gesture, click/Enter/Space tug, `role="switch"`, persists, no flash (inline pre-paint script), sleeps when still.
-- Doors: four arched doors + the Certificates door along the wall (arrow / keyboard / links); hover cracks the door and describes the room; click swings it into the room and zooms through; back restores the door focus.
+- Doors: five arched doors on one wall; spring leaf; walk-in zoom and walk-out (back out of the doorway, door swings shut) matched to the reference's timings.
+- Smoothness pass: no canvas blur in the cord, no blend-mode or backdrop blur layers while scrolling, story work paused off screen, Lenis lerp .085, parallax on cached offsets. `scripts/motion.mjs` frame check: scroll and walk-in p95 ≈ 7 ms (headless Edge).
 - Rooms `/work/{ai-agents,products-web,ml-impact}`: stacked sticky panels with real screenshots in monitor/phone/terminal frames, search, coursework archive.
 - 19 case studies `/projects/*` with problem / approach / decisions / features / stack / contribution / limits / evidence and a screenshot lightbox.
 - Tamrivo info room (no code, links or internals, per owner).

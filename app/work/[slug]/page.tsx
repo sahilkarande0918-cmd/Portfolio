@@ -25,7 +25,7 @@ export default async function Room({ params }: { params: Promise<{ slug: string 
     <div className="roomv" style={{ "--door": d.color } as React.CSSProperties}>
       <div className="roomv__glow" aria-hidden="true" />
       <div className="wrap">
-        <header className="intro">
+        <header className="intro" data-speed="0.14">
           <p className="lbl">Room · {d.tagline}</p>
           <h1>{d.name}</h1>
           <p>{d.intro}</p>

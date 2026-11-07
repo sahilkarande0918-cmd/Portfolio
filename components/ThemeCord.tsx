@@ -122,9 +122,12 @@ export default function ThemeCord() {
       ctx.save();
       ctx.translate(5, 9);
       path();
-      ctx.strokeStyle = `rgba(0,0,0,${shadow})`;
-      ctx.lineWidth = 4;
-      ctx.filter = "blur(2.5px)";
+      // a soft edge from two plain strokes: a canvas blur filter costs a full re-raster every frame
+      ctx.strokeStyle = `rgba(0,0,0,${shadow * 0.35})`;
+      ctx.lineWidth = 8;
+      ctx.stroke();
+      ctx.strokeStyle = `rgba(0,0,0,${shadow * 0.55})`;
+      ctx.lineWidth = 3.5;
       ctx.stroke();
       ctx.restore();
       // braided cotton cord: dark edge, body, twist, lit side
@@ -157,8 +160,13 @@ export default function ThemeCord() {
       // shadow
       ctx.save();
       ctx.translate(6, 10);
-      ctx.filter = "blur(4px)";
-      ctx.fillStyle = `rgba(0,0,0,${shadow + 0.1})`;
+      ctx.fillStyle = `rgba(0,0,0,${(shadow + 0.1) * 0.35})`;
+      ctx.save();
+      ctx.scale(1.25, 1.15);
+      knob();
+      ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = `rgba(0,0,0,${(shadow + 0.1) * 0.6})`;
       knob();
       ctx.fill();
       ctx.restore();

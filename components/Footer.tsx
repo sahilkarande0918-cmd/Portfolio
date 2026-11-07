@@ -38,7 +38,7 @@ export default function Footer() {
             <i />
             {site.status[0]}
           </p>
-          <h2 className="sf__h" id="sfTitle">
+          <h2 className="sf__h" id="sfTitle" data-speed="0.07">
             Have something to build?<span>Let&apos;s talk about it.</span>
           </h2>
           <p className="sf__p">
@@ -100,7 +100,7 @@ export default function Footer() {
             <a href="#main">Back to top ↑</a>
           </div>
         </div>
-        <p className="sf__word" aria-hidden="true">
+        <p className="sf__word" aria-hidden="true" data-speed="-0.06">
           Sahil Karande
         </p>
       </footer>

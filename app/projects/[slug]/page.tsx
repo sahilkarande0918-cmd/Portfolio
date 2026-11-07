@@ -25,7 +25,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
     <article className="roomv case" style={{ "--door": room.color } as React.CSSProperties}>
       <div className="roomv__glow" aria-hidden="true" />
       <div className="wrap">
-        <header className="case__head">
+        <header className="case__head" data-speed="0.12">
           <p className="card__meta">
             <Link href={room.href}>{room.name}</Link>
             <i />
@@ -62,7 +62,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {p.demo?.note && <p className="case__note">{p.demo.note}</p>}
         </header>
 
-        <div className="case__hero">
+        <div className="case__hero" data-speed="-0.05">
           <Device p={p} eager />
         </div>
 
