@@ -97,7 +97,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
 
 ## Next steps
 1. Nothing is pending from the owner. Wait for new instructions.
-2. When is-a.dev PR #60323 merges, verify the domain and HTTPS in Vercel.
+2. Done: thesahilkarande.is-a.dev is verified and served over HTTPS (8 Nov 2026).
 3. If asked to improve walk-in smoothness, measure first with `scripts/present.mjs` (FRESH=1, CPU=4, LOWEND=1) and change one thing at a time.
 
 ## Tools and files
