@@ -56,6 +56,23 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
   - Certificates page: the intro's parallax drift slid it over the world tabs. The drift is removed from that header only.
   - is-a.dev PR #60323, checked 8 Nov: still open, review required, not merged; no DNS record yet.
 
+- **Light studio redesign** (branch `light-studio`, preview only; not merged to production until the owner reviews it):
+  - Only light mode changed. Dark stays the default and is visually unchanged.
+  - **Styles:** everything lives in `app/light.css`, scoped to `[data-mode="light"]`.
+  - **Light-only set pieces** (`display: none` in dark):
+    - `.studio`: floor plus teal and coral props, in `app/page.tsx`.
+    - `.fig__ring`: the lit ring behind the portrait, in `Portrait.tsx`.
+  - **Light-only canvas colours:** warm cord shadows in `ThemeCord.tsx`, etched rose-brown story dials in `Story.tsx`.
+  - **Switching to light:** a view-transition reveal from the cord; switching back to dark keeps the old crossfade.
+  - **Idle warm-up** (`ThemeCord.tsx`): while the page sits in dark mode, a 1%-opacity light copy of the on-screen section is drawn for 3 frames. This compiles the GPU's light-mode drawing ahead of the switch: ~80 ms frames before, 29–44 ms after; the live site measures 27–31 ms.
+  - **Rapid-pull bug fixed** (`mode.ts`): each pull now flips from the latest requested mode, not from a transition that hasn't landed yet. The bug was already on the live site.
+  - **Dark regression check:** `scripts/themeshots.mjs` captures 86 fixed views per mode (desktop 1440×900, tablet 834×1112, phone 390×844). Against the pre-change baseline, dark differs by 0.000% in every view.
+  - **Light-mode measurements:**
+    - First scroll into the doors: worst frame ~20 ms.
+    - Walk out: 9–16 ms.
+    - Walk in: the same ~70 ms covered handoff frame as dark.
+  - **Light-mode contrast:** body text 12:1, muted text ≥ 4.8:1. Large display text: "I am a" at 60% opacity measures ≥ 3:1.
+
 ## Checks actually run (8 Nov 2026, at `6aa38a0`)
 - `npx tsc --noEmit`: exit 0.
 - `npx eslint .`: exit 0.

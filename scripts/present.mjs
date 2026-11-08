@@ -80,6 +80,8 @@ for (let r = 0; r < runs; r++) {
   const cdp = await p.context().newCDPSession(p);
   // CPU=n: slow the page's CPU n times; LOWEND=1: report a 4-core, 4 GB laptop (the lite profile)
   if (process.env.CPU) await cdp.send("Emulation.setCPUThrottlingRate", { rate: Number(process.env.CPU) });
+  // MODE=light: measure the light theme (the site opens dark by default)
+  if (process.env.MODE) await p.addInitScript((m) => localStorage.setItem("mode", m), process.env.MODE);
   if (process.env.LOWEND) await p.addInitScript(() => { Object.defineProperty(navigator, "hardwareConcurrency", { get: () => 4 }); Object.defineProperty(navigator, "deviceMemory", { get: () => 4 }); });
   await p.goto(base + "/work/ml-impact");
   await p.waitForTimeout(2500);

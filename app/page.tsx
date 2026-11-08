@@ -10,6 +10,12 @@ export default function Home() {
     <>
       <section id="home" className="hero" aria-label="Introduction">
         <div className="hero__vig" aria-hidden="true" />
+        {/* light mode only: studio floor and material accents (display: none in dark) */}
+        <div className="studio" aria-hidden="true">
+          <i className="studio__floor" />
+          <i className="studio__acc studio__acc--l" />
+          <i className="studio__acc studio__acc--r" />
+        </div>
         <div className="hero__stage" data-speed="0.1">
           <Portrait />
         </div>

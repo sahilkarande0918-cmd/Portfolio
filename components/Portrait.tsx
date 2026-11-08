@@ -97,6 +97,8 @@ export default function Portrait() {
         if (e.pointerType !== "mouse" && !(e.target as HTMLElement).closest("button")) setColor((c) => !c);
       }}
     >
+      {/* light mode only: the lit ring behind the silhouette (display: none in dark) */}
+      <span className="fig__ring" aria-hidden="true" />
       <Image src="/portrait/bw.webp" alt="" fill priority draggable={false} sizes="(min-width: 1024px) 40vw, 80vw" />
       <Image className="fig__color" src="/portrait/color.webp" alt="" fill draggable={false} sizes="(min-width: 1024px) 40vw, 80vw" />
       <canvas ref={cv} aria-hidden="true" />

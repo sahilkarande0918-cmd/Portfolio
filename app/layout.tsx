@@ -9,6 +9,7 @@ import Footer from "@/components/Footer";
 import "lenis/dist/lenis.css";
 import "./globals.css";
 import "./pages.css";
+import "./light.css";
 
 const onest = Onest({ subsets: ["latin"], variable: "--font-onest", display: "swap" });
 

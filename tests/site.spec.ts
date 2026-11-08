@@ -15,6 +15,27 @@ test("opens in dark mode; the cord switches to light once per pull and remembers
   await expect(page.locator("html")).toHaveAttribute("data-mode", "dark");
 });
 
+test("light studio: switching on an inner page keeps the scroll and focus; its set pieces never show in dark", async ({ page }) => {
+  await page.goto("/");
+  // dark (the default) never renders the light-mode set pieces
+  for (const s of [".studio", ".fig__ring"]) await expect(page.locator(`main ${s}`)).toBeHidden();
+  await page.goto("/certificates");
+  await page.evaluate(() => scrollTo(0, document.querySelector("#w-ibm")!.getBoundingClientRect().top + scrollY));
+  await page.waitForTimeout(400);
+  const y = await page.evaluate(() => scrollY);
+  const cord = page.getByRole("switch", { name: /pull the cord/i });
+  await cord.focus();
+  // rapid repeated pulls: each one toggles, nothing reloads or scrolls, focus stays on the cord
+  for (let i = 0; i < 5; i++) await page.keyboard.press("Enter");
+  await page.waitForTimeout(800);
+  // an odd number of pulls ends in light, and stays there once every transition has settled
+  await expect(page.locator("html")).toHaveAttribute("data-mode", "light");
+  expect(Math.abs((await page.evaluate(() => scrollY)) - y)).toBeLessThan(2);
+  await expect(cord).toBeFocused();
+  await page.goto("/");
+  await expect(page.locator("main .fig__ring")).toBeVisible();
+});
+
 test("dragging the cord down past its travel toggles exactly once", async ({ page, isMobile }) => {
   test.skip(isMobile, "pointer drag");
   await page.goto("/");
@@ -50,7 +71,7 @@ for (const path of ["/work/products-web", "/work/ml-impact", "/tamrivo", "/certi
 test("room search filters projects", async ({ page }) => {
   await page.goto("/work/ai-agents");
   await page.getByPlaceholder(/search by name/i).fill("hemostat");
-  await expect(page.locator(".card")).toHaveCount(1);
+  await expect(page.locator("main .card")).toHaveCount(1);
 });
 
 test("ability card opens, flips with F and closes with Escape", async ({ page, isMobile }) => {
@@ -82,12 +103,12 @@ test("contact walks through the steps and ends on an email draft, not a fake sen
 
 test("certificates hang on lines and open full size", async ({ page }) => {
   await page.goto("/certificates");
-  await expect(page.locator(".world")).toHaveCount(5);
+  await expect(page.locator("main .world")).toHaveCount(5);
   // the prints sway on their pegs, so they are never "stable" in Playwright's sense
   await page.waitForTimeout(1200); // let the page hydrate and the scroll engine start
   await page.evaluate(() => scrollTo(0, document.getElementById("w-recognition")!.offsetTop));
   await page.waitForTimeout(600);
-  await page.locator(".paper").first().click({ force: true });
+  await page.locator("main .paper").first().click({ force: true });
   const viewer = page.getByRole("dialog", { name: "Certificate viewer" });
   await expect(viewer).toBeVisible();
   await expect(viewer.locator("img")).toBeVisible();
@@ -105,7 +126,8 @@ test("no horizontal page overflow", async ({ page }) => {
 
 test("the portrait is fixed in the page: normal cursor, can't be dragged or selected", async ({ page }) => {
   await page.goto("/");
-  const fig = page.locator(".fig");
+  // main: the idle warm-up copies drawn for a few frames sit outside it
+  const fig = page.locator("main .fig");
   await expect(fig).toHaveCSS("cursor", "default");
   await expect(fig).toHaveCSS("user-select", "none");
   for (const img of await fig.locator("img").all()) {

@@ -31,7 +31,8 @@ export default function Story({ chapters }: { chapters: Chapter[] }) {
       canvas.height = H * dpr;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
-    const fg = () => (document.documentElement.dataset.mode === "dark" ? "232,228,224" : "26,24,24");
+    // light mode: an etched rose-brown, like lines cut into the plaster
+    const fg = () => (document.documentElement.dataset.mode === "dark" ? "232,228,224" : "110,70,60");
     // a tunnel of clock dials, drawn only when the scroll moves
     const dials = (p: number) => {
       ctx.clearRect(0, 0, W, H);

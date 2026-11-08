@@ -23,6 +23,40 @@ export default function ThemeCord() {
   const hit = useRef<HTMLButtonElement>(null);
   const dark = useSyncExternalStore(subMode, () => getMode() === "dark", () => false);
 
+  // The first light frame draws shapes the GPU never needed in dark (the studio's gradients and shadows):
+  // ~80 ms stuck on a fresh browser, right as the cord is pulled. While the page sits idle in dark, draw a
+  // 1%-opacity light copy of what's on screen for a few frames, so that work is done before the pull.
+  useEffect(() => {
+    let ghost: HTMLElement | undefined;
+    const warm = () => {
+      if (getMode() !== "dark") return;
+      const src = [...document.querySelectorAll<HTMLElement>("main > *")].find((e) => {
+        const r = e.getBoundingClientRect();
+        return r.bottom > 0 && r.top < innerHeight;
+      });
+      if (!src) return;
+      const copy = src.cloneNode(true) as HTMLElement;
+      copy.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+      copy.removeAttribute("id");
+      copy.style.marginTop = `${src.getBoundingClientRect().top}px`;
+      ghost = document.createElement("div");
+      ghost.dataset.mode = "light";
+      ghost.inert = true;
+      ghost.setAttribute("aria-hidden", "true");
+      ghost.style.cssText = "position:fixed;inset:0;overflow:hidden;opacity:0.01;pointer-events:none;z-index:2147483647";
+      ghost.append(copy);
+      document.body.append(ghost);
+      let n = 0;
+      const tick = () => (++n < 4 ? requestAnimationFrame(tick) : ghost?.remove());
+      requestAnimationFrame(tick);
+    };
+    const idle = "requestIdleCallback" in window ? requestIdleCallback(warm, { timeout: 3000 }) : setTimeout(warm, 2000);
+    return () => {
+      ("cancelIdleCallback" in window ? cancelIdleCallback : clearTimeout)(idle as number);
+      ghost?.remove();
+    };
+  }, []);
+
   useEffect(() => {
 
     const canvas = cv.current!, ctx = canvas.getContext("2d")!, el = box.current!, btn = hit.current!;
@@ -107,7 +141,9 @@ export default function ThemeCord() {
 
     function draw() {
       ctx.clearRect(0, 0, W, H);
-      const shadow = dark() ? 0.55 : 0.22;
+      const shadow = dark() ? 0.55 : 0.26;
+      // light mode's studio casts warm umber shadows; dark keeps its black ones
+      const sh = dark() ? "0,0,0" : "92,60,52";
       const path = () => {
         ctx.beginPath();
         ctx.moveTo(pts[0].x, pts[0].y);
@@ -123,10 +159,10 @@ export default function ThemeCord() {
       ctx.translate(5, 9);
       path();
       // a soft edge from two plain strokes: a canvas blur filter costs a full re-raster every frame
-      ctx.strokeStyle = `rgba(0,0,0,${shadow * 0.35})`;
+      ctx.strokeStyle = `rgba(${sh},${shadow * 0.35})`;
       ctx.lineWidth = 8;
       ctx.stroke();
-      ctx.strokeStyle = `rgba(0,0,0,${shadow * 0.55})`;
+      ctx.strokeStyle = `rgba(${sh},${shadow * 0.55})`;
       ctx.lineWidth = 3.5;
       ctx.stroke();
       ctx.restore();
@@ -160,13 +196,13 @@ export default function ThemeCord() {
       // shadow
       ctx.save();
       ctx.translate(6, 10);
-      ctx.fillStyle = `rgba(0,0,0,${(shadow + 0.1) * 0.35})`;
+      ctx.fillStyle = `rgba(${sh},${(shadow + 0.1) * 0.35})`;
       ctx.save();
       ctx.scale(1.25, 1.15);
       knob();
       ctx.fill();
       ctx.restore();
-      ctx.fillStyle = `rgba(0,0,0,${(shadow + 0.1) * 0.6})`;
+      ctx.fillStyle = `rgba(${sh},${(shadow + 0.1) * 0.6})`;
       knob();
       ctx.fill();
       ctx.restore();
