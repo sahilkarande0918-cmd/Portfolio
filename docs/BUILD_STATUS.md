@@ -5,7 +5,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
 ## State
 - Repo `sahilkarande0918-cmd/Portfolio`, local `D:\Portfolio`, branch `main`, in sync with `origin/main`.
 - Latest implementation commit: `86f575b` (door exit fix). `a646049` (walk-in tweak) was reverted by `6aa38a0`; the code at `6aa38a0` equals `86f575b` plus the scripts.
-- Live: https://thesahilkarande.vercel.app (Vercel, auto-deploys on push to `main`).
+- Live: https://thesahilkarande.is-a.dev (main address) and https://thesahilkarande.vercel.app. Vercel auto-deploys on push to `main`.
 - Git identity: `sahilkarande0918-cmd <sahilkarande0918@gmail.com>`. No Claude/AI author, co-author or "generated with" lines, in commits or PRs. `.claude/settings.json` has an `attribution` block that turns this off.
 - Current task: none in progress. The last request ("coming out of the door is laggy") is fixed and was verified on the live site.
 
@@ -93,7 +93,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
 - The local `next build` hang has not been investigated.
 - The B.Tech start month is unconfirmed (shown as "2025 — Now").
 - Optional assets: Drishti screenshots (if wanted instead of the icon) and a résumé PDF.
-- **is-a.dev: live.** https://thesahilkarande.is-a.dev is verified in Vercel and serves the site. The certificate is from Let's Encrypt and expires 6 Feb 2027; Vercel renews it automatically. HTTP redirects to HTTPS (308). DNS is a CNAME to Vercel plus the `_vercel` TXT record, both in is-a.dev's repo. The canonical URL in metadata and the sitemap is still `thesahilkarande.vercel.app`.
+- **is-a.dev: live.** https://thesahilkarande.is-a.dev is verified in Vercel and serves the site. The certificate is from Let's Encrypt and expires 6 Feb 2027; Vercel renews it automatically. HTTP redirects to HTTPS (308). DNS is a CNAME to Vercel plus the `_vercel` TXT record, both in is-a.dev's repo. The site's own address (`content/site.ts`: canonical, sitemap, robots, Open Graph, Person schema) is `https://thesahilkarande.is-a.dev`.
 
 ## Next steps
 1. Nothing is pending from the owner. Wait for new instructions.

@@ -18,6 +18,8 @@ export const metadata: Metadata = {
   title: { default: site.title, template: `%s — ${site.name}` },
   description: site.description,
   authors: [{ name: site.name, url: site.github }],
+  // every page names its is-a.dev address as the original, so the vercel.app copy isn't indexed twice
+  alternates: { canonical: "./" },
   openGraph: { type: "profile", siteName: site.name, title: site.title, description: site.description, locale: "en_IN" },
   twitter: { card: "summary_large_image", title: site.title, description: site.description },
 };

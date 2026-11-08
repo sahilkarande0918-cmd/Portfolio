@@ -3,7 +3,7 @@
 export const site = {
   name: "Sahil Karande",
   short: "Sahil",
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://thesahilkarande.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://thesahilkarande.is-a.dev",
   title: "Sahil Karande — AI Systems, Agents & Product Engineering",
   description:
     "Second-year CSE (AI & ML) student at MIT Academy of Engineering, Pune, building AI systems, agents, developer tools and full-stack products — and building Tamrivo.",

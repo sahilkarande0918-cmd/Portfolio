@@ -2,7 +2,7 @@
 
 Next.js (App Router) + TypeScript + plain CSS. Static: no database, no CMS, no secrets.
 
-Live at https://thesahilkarande.vercel.app — every push to `main` redeploys it on Vercel.
+Live at https://thesahilkarande.is-a.dev (also https://thesahilkarande.vercel.app) — every push to `main` redeploys it on Vercel.
 
 ```bash
 npm install
