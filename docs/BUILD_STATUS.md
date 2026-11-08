@@ -17,6 +17,9 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
 - **KisaanRaksha:** won the Hack4Humanity 2026 3rd prize. The contact email may be public.
 - **Drishti 2.0:** app icon only. **Veris:** owner-supplied Android screenshots.
 - **Certificates:** clothesline / pegged "worlds" with stacks, in short sections, not a long scroll.
+  - **Newest first on every line**, regardless of type: sorted by the printed date.
+  - A certificate with no printed date gets `added: "<day the owner gave it>"` in `content/certificates.ts`. That date is used for ordering only and never shown.
+  - Each new certificate the owner gives goes to the front.
 - **Theme:** dark by default until the cord is pulled.
 - **Doors:** all five doors in one line. Walk in and out should be smooth and match the reference.
 - **Scrolling:** smooth Lenis scrolling and parallax on capable devices. No lag on low-end phones or laptops.

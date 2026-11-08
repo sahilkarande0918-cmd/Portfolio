@@ -6,11 +6,12 @@ import generated from "./certificates.generated.json";
 
 export type CertType = "Course" | "Accreditation" | "Internship" | "Prize" | "Finalist" | "Participation";
 
-type Meta = { title: string; issuer: string; type: CertType; date?: string; verify?: string; note?: string; series?: string };
+// `added`: when the owner handed it over, for ordering only (never shown) — for documents with no printed date
+type Meta = { title: string; issuer: string; type: CertType; date?: string; added?: string; verify?: string; note?: string; series?: string };
 
 const meta: Record<string, Meta> = {
   "Hack4Humanity 3rd prize.pdf": { title: "Hack4Humanity 2026 — 3rd Prize", issuer: "IEEE Pune Section", type: "Prize", date: "2026-08-08", note: "Awarded for KisaanRaksha." },
-  "DY patil Hackathon certificate .pdf": { title: "Kurukshetra — War Led by Strategies", issuer: "CSI DIT × Team DevKraft, DYP DPU", type: "Participation", note: "Certificate of appreciation for participating and contributing at the Kurukshetra hackathon." },
+  "DY patil Hackathon certificate .pdf": { title: "Kurukshetra — War Led by Strategies", issuer: "CSI DIT × Team DevKraft, DYP DPU", type: "Participation", added: "2026-11-08", note: "Certificate of appreciation for participating and contributing at the Kurukshetra hackathon." },
   "E-summit certificate.pdf": { title: "Top Finalist, Innoventure 2026 (E-Summit'26)", issuer: "MIT AOE E-Cell", type: "Finalist", date: "2026-02" },
   "Cisco Internship Certificate .pdf": {
     title: "Virtual Internship Program in Artificial Intelligence",
@@ -55,11 +56,8 @@ export const certificates: Certificate[] = generated
       ? { ...g, ...m, needsReview: false }
       : { ...g, title: g.file.replace(/\.[a-z]+$/i, ""), issuer: "Other", type: "Course" as CertType, needsReview: true };
   })
-  .sort((a, b) => order(a.type) - order(b.type) || (b.date ?? "").localeCompare(a.date ?? ""));
-
-function order(t: CertType) {
-  return ["Prize", "Finalist", "Internship", "Accreditation", "Course", "Participation"].indexOf(t);
-}
+  // newest first, on every line (owner's rule): the printed date, else when it was added; undated ones last
+  .sort((a, b) => (b.date ?? b.added ?? "").localeCompare(a.date ?? a.added ?? ""));
 
 
 // The Certificates room hangs each group on its own line, in its own colours.
