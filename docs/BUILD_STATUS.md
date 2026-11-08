@@ -54,7 +54,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
   - Measured in a cold headed Edge on a local production build: worst frame 80–104 ms before, 14–16 ms after, none over 25 ms.
   - The warm-up only runs when the door row starts below the first screen, so the check measures the row, not the section; the section itself starts 32 px into the viewport.
   - Certificates page: the intro's parallax drift slid it over the world tabs. The drift is removed from that header only.
-  - is-a.dev PR #60323, checked 8 Nov: still open, review required, not merged; no DNS record yet.
+  - is-a.dev PR #60323: merged 8 Nov 2026 14:14 UTC (by notamitgamer).
 
 - **Light studio redesign** (branch `light-studio`, preview only; not merged to production until the owner reviews it):
   - Only light mode changed. Dark stays the default and is visually unchanged.
@@ -93,7 +93,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
 - The local `next build` hang has not been investigated.
 - The B.Tech start month is unconfirmed (shown as "2025 — Now").
 - Optional assets: Drishti screenshots (if wanted instead of the icon) and a résumé PDF.
-- **is-a.dev:** the owner submitted PR #60323 for `thesahilkarande.is-a.dev`. Last known: all checks green, awaiting maintainer review. The domain is already added in Vercel. Next: once it merges, confirm https://thesahilkarande.is-a.dev serves the site. is-a.dev forbids AI-made PRs; the owner handles that PR.
+- **is-a.dev: live.** https://thesahilkarande.is-a.dev is verified in Vercel and serves the site. The certificate is from Let's Encrypt and expires 6 Feb 2027; Vercel renews it automatically. HTTP redirects to HTTPS (308). DNS is a CNAME to Vercel plus the `_vercel` TXT record, both in is-a.dev's repo. The canonical URL in metadata and the sitemap is still `thesahilkarande.vercel.app`.
 
 ## Next steps
 1. Nothing is pending from the owner. Wait for new instructions.
