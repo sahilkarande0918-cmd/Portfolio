@@ -88,6 +88,17 @@
     "redacted": false
   },
   {
+    "file": "DY patil Hackathon certificate .pdf",
+    "slug": "dy-patil-hackathon-certificate",
+    "sha256": "56fa361d142db199",
+    "thumb": "/certificates/thumbs/dy-patil-hackathon-certificate.webp",
+    "full": "/certificates/full/dy-patil-hackathon-certificate.webp",
+    "width": 1755,
+    "height": 1241,
+    "document": "/certificates/files/dy-patil-hackathon-certificate.pdf",
+    "redacted": false
+  },
+  {
     "file": "E-summit certificate.pdf",
     "slug": "e-summit-certificate",
     "sha256": "4a5c6a325ce37d48",

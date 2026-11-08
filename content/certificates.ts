@@ -10,6 +10,7 @@ type Meta = { title: string; issuer: string; type: CertType; date?: string; veri
 
 const meta: Record<string, Meta> = {
   "Hack4Humanity 3rd prize.pdf": { title: "Hack4Humanity 2026 — 3rd Prize", issuer: "IEEE Pune Section", type: "Prize", date: "2026-08-08", note: "Awarded for KisaanRaksha." },
+  "DY patil Hackathon certificate .pdf": { title: "Kurukshetra — War Led by Strategies", issuer: "CSI DIT × Team DevKraft, DYP DPU", type: "Participation", note: "Certificate of appreciation for participating and contributing at the Kurukshetra hackathon." },
   "E-summit certificate.pdf": { title: "Top Finalist, Innoventure 2026 (E-Summit'26)", issuer: "MIT AOE E-Cell", type: "Finalist", date: "2026-02" },
   "Cisco Internship Certificate .pdf": {
     title: "Virtual Internship Program in Artificial Intelligence",
@@ -67,8 +68,8 @@ export type World = { key: string; name: string; em: string; kicker: string; des
 const groups: (Omit<World, "items"> & { match: (c: Certificate) => boolean })[] = [
   {
     key: "recognition", name: "Prizes &", em: "Internships", kicker: "Recognition · Hackathons & programmes",
-    desc: "A hackathon prize, a finalist place, two internships and the campus programmes around them.",
-    tags: ["Hack4Humanity 2026", "Cisco × AICTE", "MIT AOE"], bg: "#1c1a19", fg: "#ede6dc", acc: "#d6b26e",
+    desc: "Two hackathons with a prize, a finalist place, two internships and the campus programmes around them.",
+    tags: ["Hack4Humanity 2026", "Kurukshetra", "Cisco × AICTE", "MIT AOE"], bg: "#1c1a19", fg: "#ede6dc", acc: "#d6b26e",
     match: (c) => ["Prize", "Finalist", "Internship", "Participation"].includes(c.type),
   },
   {

@@ -44,6 +44,15 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
   - Rooms pre-warm `/` and `plaster.webp` while idle.
   - Constants in `Doors.tsx`: `ZOOM_MS 1500`, `BACK_MS 1300`, `EXIT_ZOOM 3.2`, ease `[0.65,0,0.35,1]`.
 
+- **8 Nov 2026:**
+  - Added the DY Patil "Kurukshetra" hackathon certificate (29 certificates now), in the Prizes & Internships world.
+  - Fixed a one-time hitch on the first desktop scroll into the doors. The browser's first drawing of the door wall compiles GPU shaders: ~90 ms frames in a cold browser.
+  - `Doors.tsx` now, once the page is idle, draws a 1%-opacity copy of the wall for three frames, so that work happens before the scroll.
+  - Measured in a cold headed Edge on a local production build: worst frame 80–104 ms before, 14–16 ms after, none over 25 ms.
+  - The warm-up only runs when the door row starts below the first screen, so the check measures the row, not the section; the section itself starts 32 px into the viewport.
+  - Certificates page: the intro's parallax drift slid it over the world tabs. The drift is removed from that header only.
+  - is-a.dev PR #60323, checked 8 Nov: still open, review required, not merged; no DNS record yet.
+
 ## Checks actually run (8 Nov 2026, at `6aa38a0`)
 - `npx tsc --noEmit`: exit 0.
 - `npx eslint .`: exit 0.

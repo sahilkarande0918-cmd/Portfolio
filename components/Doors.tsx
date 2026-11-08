@@ -136,8 +136,29 @@ export default function Doors({ doors }: { doors: Door[] }) {
         if (i >= 0) document.getElementById(`door-${doors[i].slug}`)?.focus({ preventScroll: true });
       });
     }
+    // A browser's first drawing of the door wall (blurred shadows, brass gradients) compiles GPU shaders:
+    // ~90 ms of stalls on the first scroll into it. While the hero sits idle, draw a 1%-opacity copy of
+    // the wall over the screen for a few frames so that work is already done.
+    let ghost: HTMLElement | undefined;
+    const warm = () => {
+      if (exit || s.querySelector(".doors__row")!.getBoundingClientRect().top < innerHeight) return;
+      ghost = s.cloneNode(true) as HTMLElement;
+      ghost.querySelectorAll("[id]").forEach((e) => e.removeAttribute("id"));
+      ghost.removeAttribute("id");
+      ghost.classList.replace("pre", "in");
+      ghost.inert = true;
+      ghost.setAttribute("aria-hidden", "true");
+      ghost.style.cssText = "position:fixed;inset:0;margin:0;opacity:0.01;pointer-events:none;z-index:2147483647";
+      document.body.append(ghost);
+      let n = 0;
+      const tick = () => (++n < 4 ? requestAnimationFrame(tick) : ghost?.remove());
+      requestAnimationFrame(tick);
+    };
+    const idle = "requestIdleCallback" in window ? requestIdleCallback(warm, { timeout: 2500 }) : setTimeout(warm, 1500);
     return () => {
       io.disconnect();
+      ("cancelIdleCallback" in window ? cancelIdleCallback : clearTimeout)(idle as number);
+      ghost?.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doors]);
