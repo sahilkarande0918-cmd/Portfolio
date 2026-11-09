@@ -121,6 +121,17 @@
     "redacted": false
   },
   {
+    "file": "HubSpot Digital Marketing certificate.png",
+    "slug": "hubspot-digital-marketing-certificate",
+    "sha256": "f2ebd9026e8ad8b0",
+    "thumb": "/certificates/thumbs/hubspot-digital-marketing-certificate.webp",
+    "full": "/certificates/full/hubspot-digital-marketing-certificate.webp",
+    "width": 1140,
+    "height": 880,
+    "document": "/certificates/files/hubspot-digital-marketing-certificate.png",
+    "redacted": false
+  },
+  {
     "file": "IBM AI language and vision certificate.pdf",
     "slug": "ibm-ai-language-and-vision-certificate",
     "sha256": "e778ee96209d98c2",

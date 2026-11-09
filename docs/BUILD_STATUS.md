@@ -48,7 +48,7 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
   - Constants in `Doors.tsx`: `ZOOM_MS 1500`, `BACK_MS 1300`, `EXIT_ZOOM 3.2`, ease `[0.65,0,0.35,1]`.
 
 - **8 Nov 2026:**
-  - Added the DY Patil "Kurukshetra" hackathon certificate (29 certificates now), in the Prizes & Internships world.
+  - Added the DY Patil "Kurukshetra" hackathon certificate (29 certificates then; 30 after the HubSpot Digital Marketing certification, added 10 Nov 2026 to More learning), in the Prizes & Internships world.
   - Fixed a one-time hitch on the first desktop scroll into the doors. The browser's first drawing of the door wall compiles GPU shaders: ~90 ms frames in a cold browser.
   - `Doors.tsx` now, once the page is idle, draws a 1%-opacity copy of the wall for three frames, so that work happens before the scroll.
   - Measured in a cold headed Edge on a local production build: worst frame 80–104 ms before, 14–16 ms after, none over 25 ms.

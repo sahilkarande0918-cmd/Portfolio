@@ -43,6 +43,13 @@ const meta: Record<string, Meta> = {
   "CISCO Data_Analytics_Essentials_certificate.pdf": { title: "Data Analytics Essentials", issuer: "Cisco Networking Academy", type: "Course", date: "2026-06-09" },
   "python-1 certificate.pdf": { title: "Python Essentials 1", issuer: "Cisco Networking Academy", series: "python", type: "Course", date: "2026-03-31" },
   "python-2 certificate.pdf": { title: "Python Essentials 2", issuer: "Cisco Networking Academy", series: "python", type: "Course", date: "2026-03-31" },
+  "HubSpot Digital Marketing certificate.png": {
+    title: "Digital Marketing Certified",
+    issuer: "HubSpot Academy",
+    type: "Accreditation",
+    date: "2026-09-30",
+    note: "Valid 30 Sep 2026 – 29 Oct 2028. SEO-friendly content, website optimisation, social media strategy, video, advertising and measuring results.",
+  },
   "databricks Gen-AI certificate.pdf": { title: "Generative AI Fundamentals", issuer: "Databricks Academy", type: "Accreditation", date: "2026-03-31" },
   "NASSCOM CERTIFICATE.pdf": { title: "Digital 101 (30 hours)", issuer: "NASSCOM FutureSkills Prime", type: "Course", date: "2026-03-22" },
 };
@@ -90,8 +97,8 @@ const groups: (Omit<World, "items"> & { match: (c: Certificate) => boolean })[] 
   },
   {
     key: "more", name: "More", em: "learning", kicker: "Accreditation & courses",
-    desc: "Everything else: an accreditation, national skills programmes and anything newly added.",
-    tags: ["Databricks", "NASSCOM"], bg: "#26302f", fg: "#e6ece9", acc: "#a9c7b8",
+    desc: "Everything else: a digital-marketing certification, an accreditation, national skills programmes and anything newly added.",
+    tags: ["HubSpot", "Databricks", "NASSCOM"], bg: "#26302f", fg: "#e6ece9", acc: "#a9c7b8",
     match: () => true,
   },
 ];
