@@ -14,7 +14,7 @@ import fitz  # PyMuPDF
 from PIL import Image, ImageDraw
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-SRC = sys.argv[1] if len(sys.argv) > 1 else os.path.join(os.path.expanduser("~"), "OneDrive", "Desktop", "Certificates")
+SRC = sys.argv[1] if len(sys.argv) > 1 else r"D:\Certificates"
 PUB = os.path.join(ROOT, "public", "certificates")
 OUT_JSON = os.path.join(ROOT, "content", "certificates.generated.json")
 MAX_PDF = 2_000_000  # larger originals are republished as a compact, rasterised PDF

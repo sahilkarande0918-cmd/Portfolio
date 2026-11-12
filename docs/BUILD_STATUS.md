@@ -110,5 +110,5 @@ Resume here after a context reset. Read this file, then `docs/reference-audit.md
   - `shots.mjs`: screenshots.
   - `capture.mjs`: project screenshots.
   - `certificates.py`: builds the certificate assets.
-- **Assets:** `public/portrait/{bw,color}.webp`, `public/media/*`, `public/certificates/{thumbs,full,files}/`, `public/textures/plaster.webp`. Certificate sources are in `C:\Users\Sahil\OneDrive\Desktop\Certificates` (also `D:\Certificates`).
+- **Assets:** `public/portrait/{bw,color}.webp`, `public/media/*`, `public/certificates/{thumbs,full,files}/`, `public/textures/plaster.webp`. Certificate sources are in `D:\Certificates` (the script's default; moved off OneDrive on 12 Nov 2026).
 - **Skills:** `ponytail:ponytail` (full) and `ponytail:ponytail-review`. `design-taste-frontend` was available for design passes.
