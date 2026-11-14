@@ -157,22 +157,20 @@ export default function CertificateGallery({ worlds }: { worlds: World[] }) {
               </header>
               <div className="line">
                 <ul className="track">
-                  {hang(w.items).map(({ first, group }) => {
-                    const x = group[0];
-                    const deck = group.length > 1;
+                  {w.items.map((x, i) => {
                     return (
-                      <li className={`print${deck ? " deck" : ""}`} key={x.slug} style={{ "--ar": x.width / x.height } as React.CSSProperties}>
+                      <li className="print" key={x.slug} style={{ "--ar": x.width / x.height } as React.CSSProperties}>
                         <span className="peg" aria-hidden="true" />
                         <button
                           className="paper"
-                          onClick={() => show(w.items, first)}
+                          onClick={() => show(w.items, i)}
                           onFocus={reveal}
-                          aria-label={deck ? `${group.length} certificates: ${group.map((g) => g.title).join("; ")} — swipe through` : `${x.title}, ${x.issuer}${x.date ? `, ${fmt(x.date)}` : ""} — view full size`}
+                          aria-label={`${x.title}, ${x.issuer}${x.date ? `, ${fmt(x.date)}` : ""} — view full size`}
                         >
                           {/* the thumbs are pre-sized 640px webp (all 31: ~0.5 MB), so they load straight away and unresized:
                               lazy loading held back every print still off to the side of the line */}
                           <Image src={x.thumb} alt="" width={x.width} height={x.height} unoptimized loading="eager" decoding="async" />
-                          <span className={`badge badge--${x.type.toLowerCase()}`}>{deck ? `${group.length} · swipe through` : x.type}</span>
+                          <span className={`badge badge--${x.type.toLowerCase()}`}>{x.type}</span>
                         </button>
                       </li>
                     );
@@ -237,15 +235,4 @@ export default function CertificateGallery({ worlds }: { worlds: World[] }) {
       </dialog>
     </>
   );
-}
-
-/** consecutive certificates of one series hang together as a stack */
-function hang(items: Certificate[]) {
-  const out: { first: number; group: Certificate[] }[] = [];
-  items.forEach((c, i) => {
-    const prev = out[out.length - 1];
-    if (prev && c.series && prev.group[0].series === c.series) prev.group.push(c);
-    else out.push({ first: i, group: [c] });
-  });
-  return out;
 }

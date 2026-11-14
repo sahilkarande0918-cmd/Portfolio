@@ -279,8 +279,6 @@ html[data-mode="light"]::view-transition-new(root) { animation: lightUp 0.65s cu
 [data-mode="light"] .peg::after { background: #7c6a55; }
 [data-mode="light"] .paper { background: #fffcf7; box-shadow: 0 0 0 1px rgba(120, 84, 74, 0.08), 0 1px 1px rgba(var(--sh), 0.14), 0 24px 40px -18px rgba(var(--sh), 0.45), 0 50px 80px -40px rgba(var(--sh), 0.3); }
 [data-mode="light"] .print:hover .paper, [data-mode="light"] .paper:focus-visible { box-shadow: 0 0 0 1px rgba(120, 84, 74, 0.08), 0 1px 1px rgba(var(--sh), 0.14), 0 34px 54px -18px rgba(var(--sh), 0.5), 0 60px 90px -40px rgba(var(--sh), 0.34); }
-[data-mode="light"] .print.deck .paper::before { background: #f6efe6; box-shadow: 0 10px 20px -10px rgba(var(--sh), 0.4); }
-[data-mode="light"] .print.deck .paper::after { background: #ece3d8; box-shadow: 0 10px 20px -10px rgba(var(--sh), 0.4); }
 [data-mode="light"] .badge { background: rgba(255, 249, 242, 0.94); color: #29272a; box-shadow: 0 0 0 1px rgba(120, 84, 74, 0.2), 0 0.3rem 0.6rem -0.3rem rgba(var(--sh), 0.4); backdrop-filter: none; }
 [data-mode="light"] .badge--prize, [data-mode="light"] .badge--finalist { background: linear-gradient(160deg, #e2c487, #b0904f); color: #2b2112; }
 [data-mode="light"] .badge--internship { background: #4f6b52; color: #fff9f2; }

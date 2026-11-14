@@ -7,7 +7,7 @@ import generated from "./certificates.generated.json";
 export type CertType = "Course" | "Accreditation" | "Internship" | "Prize" | "Finalist" | "Participation";
 
 // `added`: when the owner handed it over, for ordering only (never shown) — for documents with no printed date
-type Meta = { title: string; issuer: string; type: CertType; date?: string; added?: string; verify?: string; note?: string; series?: string };
+type Meta = { title: string; issuer: string; type: CertType; date?: string; added?: string; verify?: string; note?: string };
 
 const meta: Record<string, Meta> = {
   "Brand battle 1st prize certificate .pdf": { title: "Brand Battle 2026 — Winner", issuer: "MIT AOE E-Cell", type: "Prize", added: "2026-11-14", note: "1st prize, with team Straw-Hats. Run by the MIT AOE E-Cell and Entrepreneurial Development Foundation with industry partners." },
@@ -21,14 +21,14 @@ const meta: Record<string, Meta> = {
     date: "2026-08",
     note: "Cisco Networking Academy × AICTE, June–August 2026. Student ID masked in this preview.",
   },
-  "sarthi internship.pdf": { title: "Sarthi — Social Outreach Internship 2026", issuer: "MIT Academy of Engineering", series: "sarthi", type: "Internship", date: "2026-06-28", note: "5 weeks, 28 May – 28 June 2026." },
-  "Sahil_Karande_Sarthi_2026.pdf": { title: "Sarthi 2026 — Participation", issuer: "MIT Academy of Engineering", series: "sarthi", type: "Participation" },
+  "sarthi internship.pdf": { title: "Sarthi — Social Outreach Internship 2026", issuer: "MIT Academy of Engineering", type: "Internship", date: "2026-06-28", note: "5 weeks, 28 May – 28 June 2026." },
+  "Sahil_Karande_Sarthi_2026.pdf": { title: "Sarthi 2026 — Participation", issuer: "MIT Academy of Engineering", type: "Participation" },
   "Sahil_Karande_GyanUtsav.pdf": { title: "Gyan Utsav 2026 — Inclusive education model", issuer: "MIT Academy of Engineering", type: "Participation", date: "2026-06-14" },
   "generative AI gigs for gigs.pdf": { title: "Workshop: Generative AI — Creativity & Productivity", issuer: "GFG Campus Body, MIT AOE", type: "Participation", date: "2026-03-21" },
   "claude 101 certificate.pdf": { title: "Claude 101", issuer: "Anthropic", type: "Course" },
-  "AI fluency-framework & foundation certificate.pdf": { title: "AI Fluency: Framework & Foundations", issuer: "Anthropic", series: "ai-fluency", type: "Course" },
-  "AI fluency for students certificate.pdf": { title: "AI Fluency for Students", issuer: "Anthropic", series: "ai-fluency", type: "Course" },
-  "AI fluency-for non profits certificate.pdf": { title: "AI Fluency for Nonprofits", issuer: "Anthropic", series: "ai-fluency", type: "Course" },
+  "AI fluency-framework & foundation certificate.pdf": { title: "AI Fluency: Framework & Foundations", issuer: "Anthropic", type: "Course" },
+  "AI fluency for students certificate.pdf": { title: "AI Fluency for Students", issuer: "Anthropic", type: "Course" },
+  "AI fluency-for non profits certificate.pdf": { title: "AI Fluency for Nonprofits", issuer: "Anthropic", type: "Course" },
   "Intro to MCP certificate.pdf": { title: "Introduction to Model Context Protocol", issuer: "Anthropic", type: "Course", date: "2026-03-30", verify: "https://verify.skilljar.com/c/thuymintbnri" },
   "Intro to Agent-Skills certificate.pdf": { title: "Introduction to Agent Skills", issuer: "Anthropic", type: "Course" },
   "Intro to Sub-Agents certificate.pdf": { title: "Introduction to Subagents", issuer: "Anthropic", type: "Course" },
@@ -36,14 +36,14 @@ const meta: Record<string, Meta> = {
   "Claude with Google VertexAI certificate.pdf": { title: "Claude with Google Vertex AI", issuer: "Anthropic", type: "Course", date: "2026-03-30", verify: "https://verify.skilljar.com/c/v9864x87kdx9" },
   "IBM Agentic-AI.pdf": { title: "Make Agentic AI Work for You", issuer: "IBM SkillsBuild", type: "Course", date: "2026-03-31", verify: "https://www.credly.com/go/RYlO0Eic" },
   "IBM Get start with Gen-AI certificate.pdf": { title: "Getting Started with Generative AI", issuer: "IBM SkillsBuild", type: "Course", date: "2026-03-31", verify: "https://www.credly.com/go/tsDsbLbA" },
-  "IBM AIFundamentalsFoundationsforUnderstandingAI.pdf": { title: "AI Fundamentals: Foundations for Understanding AI", issuer: "IBM SkillsBuild", series: "ibm-fundamentals", type: "Course", date: "2026-04-06", verify: "https://www.credly.com/go/ARAlt6l4" },
-  "IBM AI language and vision certificate.pdf": { title: "AI Fundamentals: Language and Vision in AI", issuer: "IBM SkillsBuild", series: "ibm-fundamentals", type: "Course", date: "2026-04-07", verify: "https://www.credly.com/go/DoHptJRX" },
+  "IBM AIFundamentalsFoundationsforUnderstandingAI.pdf": { title: "AI Fundamentals: Foundations for Understanding AI", issuer: "IBM SkillsBuild", type: "Course", date: "2026-04-06", verify: "https://www.credly.com/go/ARAlt6l4" },
+  "IBM AI language and vision certificate.pdf": { title: "AI Fundamentals: Language and Vision in AI", issuer: "IBM SkillsBuild", type: "Course", date: "2026-04-07", verify: "https://www.credly.com/go/DoHptJRX" },
   "IBMDesign_certificate.pdf": { title: "Career Management Essentials", issuer: "IBM SkillsBuild", type: "Course", date: "2026-03-30", verify: "https://www.credly.com/badges/4ebcd03e-0e25-4a6e-9526-4c138d8b60cc" },
   "CISCO Introduction_to_Modern_AI_certificate.pdf": { title: "Introduction to Modern AI", issuer: "Cisco Networking Academy", type: "Course", date: "2026-06-10" },
   "CISCO Apply_AI-_Analyze_Customer_Reviews_certificate.pdf": { title: "Apply AI: Analyze Customer Reviews", issuer: "Cisco Networking Academy", type: "Course", date: "2026-06-09" },
   "CISCO Data_Analytics_Essentials_certificate.pdf": { title: "Data Analytics Essentials", issuer: "Cisco Networking Academy", type: "Course", date: "2026-06-09" },
-  "python-1 certificate.pdf": { title: "Python Essentials 1", issuer: "Cisco Networking Academy", series: "python", type: "Course", date: "2026-03-31" },
-  "python-2 certificate.pdf": { title: "Python Essentials 2", issuer: "Cisco Networking Academy", series: "python", type: "Course", date: "2026-03-31" },
+  "python-1 certificate.pdf": { title: "Python Essentials 1", issuer: "Cisco Networking Academy", type: "Course", date: "2026-03-31" },
+  "python-2 certificate.pdf": { title: "Python Essentials 2", issuer: "Cisco Networking Academy", type: "Course", date: "2026-03-31" },
   "HubSpot Digital Marketing certificate.png": {
     title: "Digital Marketing Certified",
     issuer: "HubSpot Academy",
@@ -108,15 +108,9 @@ export const worlds: World[] = (() => {
   const left = new Set(certificates);
   return groups
     .map(({ match, ...g }) => {
-      const items = [...left].filter(match).sort(seriesOrder);
+      const items = [...left].filter(match);
       items.forEach((c) => left.delete(c));
       return { ...g, items };
     })
     .filter((w) => w.items.length);
 })();
-
-// stacks sit together on the line, in their original order
-function seriesOrder(a: Certificate, b: Certificate) {
-  const ka = a.series ?? a.slug, kb = b.series ?? b.slug;
-  return ka === kb ? 0 : certificates.findIndex((c) => (c.series ?? c.slug) === ka) - certificates.findIndex((c) => (c.series ?? c.slug) === kb);
-}
