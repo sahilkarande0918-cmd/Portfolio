@@ -169,7 +169,9 @@ export default function CertificateGallery({ worlds }: { worlds: World[] }) {
                           onFocus={reveal}
                           aria-label={deck ? `${group.length} certificates: ${group.map((g) => g.title).join("; ")} — swipe through` : `${x.title}, ${x.issuer}${x.date ? `, ${fmt(x.date)}` : ""} — view full size`}
                         >
-                          <Image src={x.thumb} alt="" width={x.width} height={x.height} sizes="(min-width: 768px) 40vw, 80vw" />
+                          {/* the thumbs are pre-sized 640px webp (all 31: ~0.5 MB), so they load straight away and unresized:
+                              lazy loading held back every print still off to the side of the line */}
+                          <Image src={x.thumb} alt="" width={x.width} height={x.height} unoptimized loading="eager" decoding="async" />
                           <span className={`badge badge--${x.type.toLowerCase()}`}>{deck ? `${group.length} · swipe through` : x.type}</span>
                         </button>
                       </li>
