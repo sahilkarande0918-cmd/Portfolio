@@ -33,6 +33,17 @@
     "redacted": false
   },
   {
+    "file": "Brand battle 1st prize certificate .pdf",
+    "slug": "brand-battle-1st-prize-certificate",
+    "sha256": "865ee035fb9fd24a",
+    "thumb": "/certificates/thumbs/brand-battle-1st-prize-certificate.webp",
+    "full": "/certificates/full/brand-battle-1st-prize-certificate.webp",
+    "width": 1275,
+    "height": 928,
+    "document": "/certificates/files/brand-battle-1st-prize-certificate.pdf",
+    "redacted": false
+  },
+  {
     "file": "CISCO Apply_AI-_Analyze_Customer_Reviews_certificate.pdf",
     "slug": "cisco-apply-ai-analyze-customer-reviews-certificate",
     "sha256": "6982973fab492cba",

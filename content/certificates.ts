@@ -10,6 +10,7 @@ export type CertType = "Course" | "Accreditation" | "Internship" | "Prize" | "Fi
 type Meta = { title: string; issuer: string; type: CertType; date?: string; added?: string; verify?: string; note?: string; series?: string };
 
 const meta: Record<string, Meta> = {
+  "Brand battle 1st prize certificate .pdf": { title: "Brand Battle 2026 — Winner", issuer: "MIT AOE E-Cell", type: "Prize", added: "2026-11-14", note: "1st prize, with team Straw-Hats. Run by the MIT AOE E-Cell and Entrepreneurial Development Foundation with industry partners." },
   "Hack4Humanity 3rd prize.pdf": { title: "Hack4Humanity 2026 — 3rd Prize", issuer: "IEEE Pune Section", type: "Prize", date: "2026-08-08", note: "Awarded for KisaanRaksha." },
   "DY patil Hackathon certificate .pdf": { title: "Kurukshetra — War Led by Strategies", issuer: "CSI DIT × Team DevKraft, DYP DPU", type: "Participation", added: "2026-11-08", note: "Certificate of appreciation for participating and contributing at the Kurukshetra hackathon." },
   "E-summit certificate.pdf": { title: "Top Finalist, Innoventure 2026 (E-Summit'26)", issuer: "MIT AOE E-Cell", type: "Finalist", date: "2026-02" },
@@ -73,8 +74,8 @@ export type World = { key: string; name: string; em: string; kicker: string; des
 const groups: (Omit<World, "items"> & { match: (c: Certificate) => boolean })[] = [
   {
     key: "recognition", name: "Prizes &", em: "Internships", kicker: "Recognition · Hackathons & programmes",
-    desc: "Two hackathons with a prize, a finalist place, two internships and the campus programmes around them.",
-    tags: ["Hack4Humanity 2026", "Kurukshetra", "Cisco × AICTE", "MIT AOE"], bg: "#1c1a19", fg: "#ede6dc", acc: "#d6b26e",
+    desc: "A Brand Battle win, a hackathon prize, a finalist place, two internships and the campus programmes around them.",
+    tags: ["Brand Battle 2026", "Hack4Humanity 2026", "Kurukshetra", "Cisco × AICTE", "MIT AOE"], bg: "#1c1a19", fg: "#ede6dc", acc: "#d6b26e",
     match: (c) => ["Prize", "Finalist", "Internship", "Participation"].includes(c.type),
   },
   {
